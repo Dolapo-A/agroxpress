@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "594762294321",
+    "project_id": "agroxpresss",
+    "storage_bucket": "agroxpresss.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:594762294321:android:63916d28a0425df42de110",
+        "android_client_info": {
+          "package_name": "com.dolapoaraoye.agroxpresss"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "594762294321-1dupo4k416lfd4tq8pugqiaqnigphonl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3l86G-ByHzgbD1T5CLVmgja57UR06Ac0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "594762294321-1dupo4k416lfd4tq8pugqiaqnigphonl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
