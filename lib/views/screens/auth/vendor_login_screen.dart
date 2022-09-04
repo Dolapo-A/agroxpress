@@ -3,10 +3,11 @@ import 'package:agroxpresss/const.dart';
 import 'package:agroxpresss/controllers/auth_controller.dart';
 import 'package:agroxpresss/controllers/snack_bar_controller.dart';
 import 'package:agroxpresss/views/screens/auth/forgot_password_screen.dart';
+import 'package:agroxpresss/views/screens/auth/user_login_screen.dart';
 import 'package:agroxpresss/views/screens/auth/user_signup_screen.dart';
 import 'package:agroxpresss/views/screens/auth/vendor_signup_screen.dart';
-import 'package:agroxpresss/views/screens/bottom_navbar.dart';
 import 'package:agroxpresss/views/screens/customer_home_screen.dart';
+import 'package:agroxpresss/views/screens/vendor_home_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:the_validator/the_validator.dart';
@@ -23,21 +24,42 @@ class VendorLoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<VendorLoginScreen> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  late String email;
+  late String password;
+
+  // final TextEditingController _emailController = TextEditingController();
+  // final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
 
   bool passwordVisible = true;
 
   bool _isLoading = false;
 
-  loginUsers() async {
+  // function to login vendors
+  loginVendors(String email, String password) async {
+    String res = 'Some error occured';
+
+    try {
+      if (email.isNotEmpty && password.isNotEmpty) {
+        await auth.signInWithEmailAndPassword(email: email, password: password);
+
+        res = 'success';
+        print('you are now logged in');
+      } else {
+        res = 'please fields must not be empty';
+      }
+    } catch (e) {
+      res = e.toString();
+    }
+    return res;
+  }
+
+  login() async {
     setState(() {
       _isLoading = true;
     });
 
-    String res = await AuthController()
-        .loginUsers(_emailController.text, _passwordController.text);
+    String res = await loginVendors(email, password);
 
     setState(() {
       _isLoading = false;
@@ -47,7 +69,7 @@ class _LoginScreenState extends State<VendorLoginScreen> {
       snackBar(res, context);
     } else {
       return Navigator.of(context).pushNamedAndRemoveUntil(
-          CustomerHomeScreen.routeName, (route) => false);
+          vendorHomescreen.routeName, (route) => false);
     }
   }
 
@@ -72,8 +94,9 @@ class _LoginScreenState extends State<VendorLoginScreen> {
                 SizedBox(
                   height: 10,
                 ),
+                // email
                 TextFormField(
-                  controller: _emailController,
+                  // controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   style: const TextStyle(color: Colors.black, fontSize: 16),
                   decoration: InputDecoration(
@@ -114,12 +137,16 @@ class _LoginScreenState extends State<VendorLoginScreen> {
                     }
                     return null;
                   },
+
+                  onChanged: (String value) {
+                    email = value;
+                  },
                 ),
                 SizedBox(
                   height: 10,
                 ),
                 TextFormField(
-                  controller: _passwordController,
+                  // controller: _passwordController,
                   obscureText: passwordVisible,
                   // validator: FieldValidator.password(),
                   keyboardType: TextInputType.text,
@@ -179,6 +206,10 @@ class _LoginScreenState extends State<VendorLoginScreen> {
                     }
                     return null;
                   },
+
+                  onChanged: (String value) {
+                    password = value;
+                  },
                 ),
                 SizedBox(
                   height: 10,
@@ -204,9 +235,7 @@ class _LoginScreenState extends State<VendorLoginScreen> {
                 GestureDetector(
                   onTap: () {
                     if (_formkey.currentState!.validate()) {
-                      loginUsers();
-                      // _emailController.clear();
-                      // _passwordController.clear();
+                      login();
                     }
                     // print("you are logged in");
                   },
@@ -265,6 +294,40 @@ class _LoginScreenState extends State<VendorLoginScreen> {
                                       LandingVendorScreen(),
                             ))),
                 ])),
+                SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  'Or',
+                  style: TextStyle(color: Colors.grey),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                RichText(
+                    textAlign: TextAlign.center,
+                    // key: _textKey,
+                    text: TextSpan(children: <TextSpan>[
+                      const TextSpan(
+                        text: "Customer login? ",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      TextSpan(
+                          text: 'Click Here',
+                          style: const TextStyle(
+                              color: Color(0xff437366), fontSize: 14),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () =>
+                                Navigator.of(context).push(PageRouteBuilder(
+                                  pageBuilder: (context, animation,
+                                          secondaryAnimation) =>
+                                      LoginScreen(),
+                                ))),
+                    ])),
               ]),
             ),
           ),

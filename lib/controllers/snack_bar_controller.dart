@@ -9,7 +9,7 @@ snackBar(String title, BuildContext context) {
       content: Text(
         title,
         style: TextStyle(
-          fontSize: 18,
+          fontSize: 16,
           fontWeight: FontWeight.w400,
           color: Colors.white,
         ),

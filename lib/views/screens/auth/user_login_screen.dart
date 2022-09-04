@@ -6,7 +6,6 @@ import 'package:agroxpresss/views/screens/auth/forgot_password_screen.dart';
 import 'package:agroxpresss/views/screens/auth/user_signup_screen.dart';
 import 'package:agroxpresss/views/screens/auth/vendor_login_screen.dart';
 import 'package:agroxpresss/views/screens/auth/vendor_signup_screen.dart';
-import 'package:agroxpresss/views/screens/bottom_navbar.dart';
 import 'package:agroxpresss/views/screens/customer_home_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool _isLoading = false;
 
+// function to login customers
   loginUsers() async {
     setState(() {
       _isLoading = true;
@@ -210,8 +210,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       onTap: () {
                         if (_formkey.currentState!.validate()) {
                           loginUsers();
-                          // _emailController.clear();
-                          // _passwordController.clear();
                         }
                         // print("you are logged in");
                       },

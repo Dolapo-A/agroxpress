@@ -42,14 +42,14 @@ class AuthController {
   }
 
 // Function to SignUp Users(Send User data to firebase)
-  Future<String> SignUpUsers(String fullname, String email, String username,
-      String phone, String password, Uint8List? image) async {
+  Future<String> SignUpUsers(String fullname, String email, String phone,
+      String address, String password, Uint8List? image) async {
     String res = "Some error occured";
     try {
       if (fullname.isNotEmpty &&
           email.isNotEmpty &&
-          username.isNotEmpty &&
           phone.isNotEmpty &&
+          address.isNotEmpty &&
           password.isNotEmpty &&
           image != null) {
         UserCredential cred = await auth.createUserWithEmailAndPassword(
@@ -57,44 +57,15 @@ class AuthController {
 
         String downloadUrl = await _uploadImageToStorage(image);
 
-        await firestore.collection('users').doc(cred.user!.uid).set({
+        await firestore.collection('customers').doc(cred.user!.uid).set({
+          'cid': cred.user!.uid,
           'fullName': fullname,
           'email': email,
-          'username': username,
           'phone': phone,
+          'address': address,
           'image': downloadUrl,
         });
-        // await auth.verifyPhoneNumber(
-        //   phoneNumber: phone,
-        //   verificationCompleted: (PhoneAuthCredential credential) async {
-        //     // ANDROID ONLY!
 
-        //     // Sign the user in (or link) with the auto-generated credential
-        //     await auth.signInWithCredential(credential);
-        //   },
-        //   verificationFailed: (FirebaseAuthException e) {
-        //     if (e.code == 'invalid-phone-number') {
-        //       print('The provided phone number is not valid.');
-        //     }
-
-        //     // Handle other errors
-        //   },
-        //   codeSent: (String verificationId, int? resendToken) async {
-        //     // Update the UI - wait for the user to enter the SMS code
-        //     String smsCode = 'xxxx';
-
-        //     // Create a PhoneAuthCredential with the code
-        //     PhoneAuthCredential credential = PhoneAuthProvider.credential(
-        //         verificationId: verificationId, smsCode: smsCode);
-
-        //     // Sign the user in (or link) with the credential
-        //     await auth.signInWithCredential(credential);
-        //   },
-        //   timeout: const Duration(seconds: 60),
-        //   codeAutoRetrievalTimeout: (String verificationId) {
-        //     // Auto-resolution timed out...
-        //   },
-        // );
         res = 'success';
 
         print("Account Created");
@@ -109,7 +80,7 @@ class AuthController {
     return res;
   }
 
-  //function to verify Users
+  //function to signup vendors
 
   //function to login users
   loginUsers(String email, String password) async {

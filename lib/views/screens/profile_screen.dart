@@ -7,6 +7,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatefulWidget {
+  static const String routeName = 'profileScreen';
+
   const ProfileScreen({Key? key}) : super(key: key);
 
   @override
@@ -28,18 +30,196 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     // final FirebaseAuth _auth = FirebaseAuth.instance;
     CollectionReference customer =
-        FirebaseFirestore.instance.collection('users');
+        FirebaseFirestore.instance.collection('customers');
 
     return FutureBuilder(
       future: customer.doc(auth.currentUser!.uid).get(),
       builder:
           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
         if (snapshot.hasError) {
-          return Text('Something went wrong');
+          return Center(
+              child: Text('Something went wrong, unable to fetch data'));
         }
 
         if (snapshot.hasData && !snapshot.data!.exists) {
-          return Text('Data does exist');
+          // return Text('Data does exist');
+          return Scaffold(
+            body: CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  // automaticallyImplyLeading: false,
+                  backgroundColor: Colors.white,
+                  expandedHeight: 200,
+                  flexibleSpace: LayoutBuilder(
+                    builder: (context, constraints) {
+                      return FlexibleSpaceBar(
+                        title: AnimatedOpacity(
+                          opacity: constraints.biggest.height <= 100 ? 1 : 0,
+                          duration: Duration(milliseconds: 300),
+                          child: Text('Account'),
+                        ),
+                        background: Container(
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 50,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        CircleAvatar(
+                                          radius: 30,
+                                        ),
+                                        SizedBox(
+                                          width: 15,
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Guest',
+                                              style: TextStyle(
+                                                  fontSize: 22,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Text(
+                                              'Phone',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.grey,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 20, right: 20),
+                                child: Divider(
+                                  color: Colors.grey.shade500,
+                                  thickness: 0.8,
+                                ),
+                              ),
+                              ListTile(
+                                horizontalTitleGap: 5,
+                                title: Text('Email'),
+                                // subtitle: Text('dolapo@gmail.com'),
+                                leading: Icon(
+                                  Icons.email,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              Divider(
+                                color: Colors.grey.shade200,
+                                thickness: 10,
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: Column(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(color: Colors.white),
+                        child: Column(
+                          children: [
+                            ListTile(
+                              horizontalTitleGap: 5,
+                              title: Text(
+                                'address: Nil',
+                              ),
+                              // subtitle: Text('No 4, rd 5, banana island'),
+                              leading: Icon(
+                                Icons.location_pin,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 20.0),
+                              child: Divider(
+                                color: Colors.grey.shade500,
+                                thickness: 0.5,
+                              ),
+                            ),
+                            ListTile(
+                              horizontalTitleGap: 5,
+                              title: Text('Cart'),
+                              leading: Icon(
+                                Icons.shopping_cart,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 20.0),
+                              child: Divider(
+                                color: Colors.grey.shade500,
+                                thickness: 0.5,
+                              ),
+                            ),
+                            ListTile(
+                              horizontalTitleGap: 5,
+                              title: Text('Orders'),
+                              leading: Icon(
+                                Icons.delivery_dining_rounded,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 20.0),
+                              child: Divider(
+                                color: Colors.grey.shade500,
+                                thickness: 0.5,
+                              ),
+                            ),
+                            Divider(
+                              color: Colors.grey.shade200,
+                              thickness: 10,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => LoginScreen()));
+                              },
+                              child: ListTile(
+                                horizontalTitleGap: 5,
+                                title: Text(
+                                  'Log In',
+                                  style: TextStyle(color: Colors.red.shade700),
+                                ),
+                                leading: Icon(
+                                  Icons.login,
+                                  color: Colors.red.shade700,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          );
         }
 
         if (snapshot.connectionState == ConnectionState.done) {
@@ -77,6 +257,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       children: [
                                         CircleAvatar(
                                             radius: 30,
+                                            backgroundColor: generalColor,
                                             backgroundImage: NetworkImage(
                                                 '${data['image']}')),
                                         SizedBox(
@@ -156,7 +337,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             ListTile(
                               horizontalTitleGap: 5,
-                              title: Text('Address'),
+                              title: Text(
+                                '${data['address']}',
+                              ),
                               // subtitle: Text('No 4, rd 5, banana island'),
                               leading: Icon(
                                 Icons.location_pin,

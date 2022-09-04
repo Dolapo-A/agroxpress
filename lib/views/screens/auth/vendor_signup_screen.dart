@@ -4,14 +4,17 @@ import 'dart:typed_data';
 import 'package:agroxpresss/const.dart';
 import 'package:agroxpresss/controllers/auth_controller.dart';
 import 'package:agroxpresss/controllers/snack_bar_controller.dart';
-import 'package:agroxpresss/views/screens/auth/user_login_screen.dart';
 import 'package:agroxpresss/views/screens/auth/user_signup_screen.dart';
 import 'package:agroxpresss/views/screens/auth/vendor_login_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:intl_phone_field/phone_number.dart';
 import 'package:the_validator/the_validator.dart';
 
 class LandingVendorScreen extends StatefulWidget {
@@ -24,12 +27,22 @@ class LandingVendorScreen extends StatefulWidget {
 class _LandingCustomerScreenState extends State<LandingVendorScreen> {
   final GlobalKey<FormState> _formkey = GlobalKey<FormState>();
 
+  late String fullName;
+  late String email;
+  late String address;
+  late PhoneNumber phone;
+  late String password = '';
+
   final AuthController _authController = AuthController();
-  final TextEditingController _fullNameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final FirebaseAuth _fireAuth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  String res = "Some error occured";
+
+  // final TextEditingController _fullNameController = TextEditingController();
+  // final TextEditingController _emailController = TextEditingController();
+  // final TextEditingController _usernameController = TextEditingController();
+  // final TextEditingController _phoneController = TextEditingController();
+  // final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmpasswordTextController =
       TextEditingController();
   bool passwordVisible = true;
@@ -37,40 +50,6 @@ class _LandingCustomerScreenState extends State<LandingVendorScreen> {
   bool isLoading = false;
 
   Uint8List? _image;
-
-  signUp() async {
-    setState(() {
-      isLoading = true;
-    });
-    String res = await _authController.SignUpUsers(
-        _fullNameController.text,
-        _emailController.text,
-        _usernameController.text,
-        _phoneController.text,
-        _passwordController.text,
-        _image);
-
-    setState(() {
-      isLoading = false;
-    });
-
-    // if (_image == null) {
-    //   return;
-    // } else if (res != 'success') {
-    //   // print('You have navigated to the homescreen');
-    //   return snackBar(res, context);
-    // } else {
-    //   Navigator.of(context).pushReplacement(
-    //       MaterialPageRoute(builder: (context) => LoginScreen()));
-    // }
-
-    if (res != 'success') {
-      return snackBar(res, context);
-    } else {
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => VendorLoginScreen()));
-    }
-  }
 
   selectImageGallery() async {
     Uint8List img = await AuthController().pickImage(ImageSource.gallery);
@@ -89,6 +68,18 @@ class _LandingCustomerScreenState extends State<LandingVendorScreen> {
     });
 
     Navigator.pop(context);
+  }
+
+  _uploadImageToStorage(Uint8List? image) async {
+    Reference ref = firebaseStorage.ref().child('ProfilePic').child(fullName);
+
+    UploadTask uploadTask = ref.putData(image!);
+
+    TaskSnapshot snap = await uploadTask;
+
+    String downloadUrl = await snap.ref.getDownloadURL();
+
+    return downloadUrl;
   }
 
   Future<void> showChoiceDialog(BuildContext context) {
@@ -142,6 +133,74 @@ class _LandingCustomerScreenState extends State<LandingVendorScreen> {
         });
   }
 
+//function to sign up vendors
+  Future<String> signUpVendors(
+    String fullName,
+    String email,
+    String address,
+    String phone,
+    String password,
+    Uint8List? _image,
+  ) async {
+    try {
+      if (fullName.isNotEmpty &&
+          email.isNotEmpty &&
+          address.isNotEmpty &&
+          phone.isNotEmpty &&
+          password.isNotEmpty &&
+          _image != null) {
+        await _fireAuth.createUserWithEmailAndPassword(
+            email: email, password: password);
+
+        String downloadUrl = await _uploadImageToStorage(_image);
+
+        await _firestore
+            .collection('vendors')
+            .doc(_fireAuth.currentUser!.uid)
+            .set({
+          'vendorUid': _fireAuth.currentUser!.uid,
+          'storeName': fullName,
+          'email': email,
+          'address': address,
+          'phone': phone,
+          'image': downloadUrl,
+        });
+
+        res = 'success';
+        print("Account Created");
+      } else {
+        res = 'Please fields must not be empty';
+
+        print("Please fields must not be empty");
+      }
+    } catch (e) {
+      res = e.toString();
+    }
+    return res;
+  }
+
+  signUp() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    String res = await signUpVendors(
+        fullName, email, address, phone.number, password, _image);
+
+    setState(() {
+      isLoading = false;
+    });
+
+    if (_image == null) {
+      return snackBar('Please pick an image', context);
+    } else if (res != 'success') {
+      return snackBar(res, context);
+    } else {
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => VendorLoginScreen()));
+    }
+  }
+
   // const LandingVendorScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -184,39 +243,7 @@ class _LandingCustomerScreenState extends State<LandingVendorScreen> {
                           Icons.add_a_photo_rounded,
                           color: Color.fromARGB(245, 113, 113, 113),
                         ),
-                      ))
-                  // Column(
-                  //   children: [
-                  //     Container(
-                  //       decoration: BoxDecoration(
-                  //           color: Color.fromARGB(238, 67, 115, 102),
-                  //           borderRadius: BorderRadius.only(
-                  //               topLeft: Radius.circular(10),
-                  //               topRight: Radius.circular(10))),
-                  //       child: IconButton(
-                  //         onPressed: () {},
-                  //         icon: Icon(
-                  //           Icons.camera_alt,
-                  //           color: Colors.white,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //     SizedBox(
-                  //       height: 10,
-                  //     ),
-                  //     Container(
-                  //       decoration: BoxDecoration(
-                  //           color: Color.fromARGB(238, 67, 115, 102),
-                  //           borderRadius: BorderRadius.only(
-                  //               bottomLeft: Radius.circular(10),
-                  //               bottomRight: Radius.circular(10))),
-                  //       child: IconButton(
-                  //         onPressed: () {},
-                  //         icon: Icon(Icons.photo, color: Colors.white),
-                  //       ),
-                  //     ),
-                  //   ],
-                  // )
+                      )),
                 ],
               ),
               SizedBox(
@@ -227,11 +254,13 @@ class _LandingCustomerScreenState extends State<LandingVendorScreen> {
                 child: Column(
                   children: [
                     TextFormField(
-                      controller: _fullNameController,
+                      // controller: _fullNameController,
+                      textCapitalization: TextCapitalization.words,
+
                       keyboardType: TextInputType.text,
                       style: const TextStyle(color: Colors.black, fontSize: 16),
                       decoration: InputDecoration(
-                        labelText: "Full name",
+                        labelText: "Store Name",
                         isDense: true,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 10,
@@ -269,12 +298,16 @@ class _LandingCustomerScreenState extends State<LandingVendorScreen> {
                         }
                         return null;
                       },
+                      onChanged: (String value) {
+                        fullName = value;
+                      },
                     ),
                     SizedBox(
                       height: 10,
                     ),
+                    // email
                     TextFormField(
-                      controller: _emailController,
+                      // controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
                       style: const TextStyle(color: Colors.black, fontSize: 16),
                       decoration: InputDecoration(
@@ -313,16 +346,22 @@ class _LandingCustomerScreenState extends State<LandingVendorScreen> {
                       validator: (value) => EmailValidator.validate(value!)
                           ? null
                           : "Please enter a valid email",
+                      onChanged: (String value) {
+                        email = value;
+                      },
                     ),
                     SizedBox(
                       height: 10,
                     ),
+                    // address
                     TextFormField(
-                      controller: _usernameController,
+                      // controller: _usernameController,
+                      textCapitalization: TextCapitalization.sentences,
+
                       keyboardType: TextInputType.text,
                       style: const TextStyle(color: Colors.black, fontSize: 16),
                       decoration: InputDecoration(
-                        labelText: "Username",
+                        labelText: "Address",
                         isDense: true,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 10,
@@ -360,14 +399,18 @@ class _LandingCustomerScreenState extends State<LandingVendorScreen> {
                         }
                         return null;
                       },
+                      onChanged: (String value) {
+                        address = value;
+                      },
                     ),
                     SizedBox(
                       height: 10,
                     ),
+                    // Phone Number
                     IntlPhoneField(
                       disableLengthCheck: true,
                       showCountryFlag: true,
-                      controller: _phoneController,
+                      // controller: _phoneController,
                       style: const TextStyle(color: Colors.black, fontSize: 16),
                       decoration: InputDecoration(
                         labelText: "Phone Number",
@@ -409,15 +452,17 @@ class _LandingCustomerScreenState extends State<LandingVendorScreen> {
                       //   return null;
                       // },
                       initialCountryCode: 'GH',
-                      onChanged: (phone) {
-                        print(phone.completeNumber);
+                      onChanged: (value) {
+                        print(value.completeNumber);
+                        phone = value;
                       },
                     ),
                     SizedBox(
                       height: 15,
                     ),
+                    // Password
                     TextFormField(
-                      controller: _passwordController,
+                      // controller: _passwordController,
                       obscureText: passwordVisible,
                       validator: FieldValidator.password(
                           minLength: 8,
@@ -436,6 +481,9 @@ class _LandingCustomerScreenState extends State<LandingVendorScreen> {
                           onCapitalLetterNotPresent: () {
                             return "Must contain CAPITAL letters";
                           }),
+                      onChanged: (String value) {
+                        password = value;
+                      },
                       keyboardType: TextInputType.text,
                       style: const TextStyle(color: Colors.black, fontSize: 16),
                       decoration: InputDecoration(
@@ -533,6 +581,7 @@ class _LandingCustomerScreenState extends State<LandingVendorScreen> {
                     // SizedBox(
                     //   height: 7,
                     // ),
+                    //confirmpassword
                     TextFormField(
                       controller: _confirmpasswordTextController,
                       keyboardType: TextInputType.text,
@@ -571,7 +620,7 @@ class _LandingCustomerScreenState extends State<LandingVendorScreen> {
                           borderRadius: BorderRadius.circular(5.0),
                         ),
                       ),
-                      validator: FieldValidator.equalTo(_passwordController,
+                      validator: FieldValidator.equalTo(password,
                           message: "Password mismatch"),
                     ),
                     SizedBox(

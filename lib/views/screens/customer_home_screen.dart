@@ -1,9 +1,13 @@
+import 'dart:ui';
+
 import 'package:agroxpresss/views/screens/cart_screen.dart';
 import 'package:agroxpresss/views/screens/category_screen.dart';
 import 'package:agroxpresss/views/screens/home_screen.dart';
 import 'package:agroxpresss/views/screens/profile_screen.dart';
+import 'package:agroxpresss/views/screens/store_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class CustomerHomeScreen extends StatefulWidget {
   static const String routeName = 'customerHomeScreen';
@@ -19,9 +23,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
   final List<Widget> page = [
     HomeScreen(),
     CategoryScreen(),
-    Center(
-      child: Text('StoreScreen'),
-    ),
+    StoreScreen(),
     CartScreen(),
     ProfileScreen(),
   ];
@@ -35,38 +37,46 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
             });
           },
           currentIndex: pageIndex,
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.transparent,
           activeColor: Color(0xff437366),
           inactiveColor: Colors.black45,
           // backgroundColor: backgroundColor,
           items: [
             BottomNavigationBarItem(
                 icon: Icon(
-                  Icons.home_filled,
-                  size: 25,
+                  // Icons.home_filled,
+                  FontAwesomeIcons.house,
+                  // Icons.home,
+                  size: 20,
                 ),
-                label: 'home'),
+                label: 'Home'),
             BottomNavigationBarItem(
                 icon: Icon(
-                  Icons.search_rounded,
-                  size: 25,
+                  // Icons.search_rounded,
+                  // CupertinoIcons.search,
+                  FontAwesomeIcons.magnifyingGlass,
+                  size: 20,
                 ),
                 label: 'Category'),
             BottomNavigationBarItem(
                 icon: Icon(
-                  Icons.store,
-                  size: 25,
+                  // Icons.store,
+                  FontAwesomeIcons.store,
+                  size: 20,
                 ),
                 label: 'Store'),
             BottomNavigationBarItem(
                 icon: Icon(
-                  Icons.shopping_cart,
-                  size: 25,
+                  // Icons.shopping_cart,
+                  // CupertinoIcons.shopping_cart,
+                  FontAwesomeIcons.cartArrowDown,
+                  size: 20,
                 ),
                 label: 'Cart'),
             BottomNavigationBarItem(
                 icon: Icon(
                   Icons.person,
+                  // CupertinoIcons.person,
                   size: 25,
                 ),
                 label: 'Profile'),

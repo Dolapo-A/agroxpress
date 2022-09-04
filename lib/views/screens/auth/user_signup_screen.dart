@@ -24,7 +24,7 @@ class _LandingCustomerScreenState extends State<LandingCustomerScreen> {
   final AuthController _authController = AuthController();
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmpasswordTextController =
@@ -42,8 +42,8 @@ class _LandingCustomerScreenState extends State<LandingCustomerScreen> {
     String res = await _authController.SignUpUsers(
         _fullNameController.text,
         _emailController.text,
-        _usernameController.text,
         _phoneController.text,
+        _addressController.text,
         _passwordController.text,
         _image);
 
@@ -51,17 +51,9 @@ class _LandingCustomerScreenState extends State<LandingCustomerScreen> {
       isLoading = false;
     });
 
-    // if (_image == null) {
-    //   return;
-    // } else if (res != 'success') {
-    //   // print('You have navigated to the homescreen');
-    //   return snackBar(res, context);
-    // } else {
-    //   Navigator.of(context).pushReplacement(
-    //       MaterialPageRoute(builder: (context) => LoginScreen()));
-    // }
-
-    if (res != 'success') {
+    if (_image == null) {
+      return snackBar('Please pick an image', context);
+    } else if (res != 'success') {
       return snackBar(res, context);
     } else {
       Navigator.of(context).pushReplacement(
@@ -191,9 +183,13 @@ class _LandingCustomerScreenState extends State<LandingCustomerScreen> {
                 key: _formkey,
                 child: Column(
                   children: [
+                    // fullname
+                    // fullname
+                    // fullname
                     TextFormField(
                       controller: _fullNameController,
-                      keyboardType: TextInputType.text,
+                      textCapitalization: TextCapitalization.words,
+                      keyboardType: TextInputType.name,
                       style: const TextStyle(color: Colors.black, fontSize: 16),
                       decoration: InputDecoration(
                         labelText: "Full name",
@@ -238,6 +234,9 @@ class _LandingCustomerScreenState extends State<LandingCustomerScreen> {
                     SizedBox(
                       height: 10,
                     ),
+                    // email
+                    // email
+                    // email
                     TextFormField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
@@ -282,12 +281,65 @@ class _LandingCustomerScreenState extends State<LandingCustomerScreen> {
                     SizedBox(
                       height: 10,
                     ),
+                    // phone
+                    // phone
+                    // phone
+                    IntlPhoneField(
+                      disableLengthCheck: true,
+                      showCountryFlag: true,
+                      controller: _phoneController,
+                      style: const TextStyle(color: Colors.black, fontSize: 16),
+                      decoration: InputDecoration(
+                        labelText: "Phone Number",
+                        isDense: true,
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 15,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                              color: Color(0xff437366), width: 2),
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                        labelStyle: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 16,
+                        ),
+
+                        //for the errors
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: const BorderSide(
+                            color: Colors.red,
+                            width: 2.0,
+                          ),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                      ),
+                      initialCountryCode: 'GH',
+                      onChanged: (phone) {
+                        print(phone.completeNumber);
+                      },
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    // address
+                    // address
+                    // address
                     TextFormField(
-                      controller: _usernameController,
+                      controller: _addressController,
+                      textCapitalization: TextCapitalization.sentences,
                       keyboardType: TextInputType.text,
                       style: const TextStyle(color: Colors.black, fontSize: 16),
                       decoration: InputDecoration(
-                        labelText: "Username",
+                        labelText: "Address",
                         isDense: true,
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 10,
@@ -328,58 +380,6 @@ class _LandingCustomerScreenState extends State<LandingCustomerScreen> {
                     ),
                     SizedBox(
                       height: 10,
-                    ),
-                    IntlPhoneField(
-                      disableLengthCheck: true,
-                      showCountryFlag: true,
-                      controller: _phoneController,
-                      style: const TextStyle(color: Colors.black, fontSize: 16),
-                      decoration: InputDecoration(
-                        labelText: "Phone Number",
-                        isDense: true,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 15,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                              color: Color(0xff437366), width: 2),
-                          borderRadius: BorderRadius.circular(5.0),
-                        ),
-                        labelStyle: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 16,
-                        ),
-
-                        //for the errors
-                        errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                          borderSide: const BorderSide(
-                            color: Colors.red,
-                            width: 2.0,
-                          ),
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                        ),
-                      ),
-                      // validator: (value) {
-                      //   if (value!.isEmpty) {
-                      //     return 'This field is required';
-                      //   }
-                      //   return null;
-                      // },
-                      initialCountryCode: 'GH',
-                      onChanged: (phone) {
-                        print(phone.completeNumber);
-                      },
-                    ),
-                    SizedBox(
-                      height: 15,
                     ),
                     TextFormField(
                       controller: _passwordController,
