@@ -13,16 +13,24 @@ import 'package:collection/collection.dart';
 
 import '../../provider/wishlist_provider.dart';
 
-class CartScreen extends StatelessWidget {
-  static const String routeName = 'cartScreen';
+class CartScreenProductDetails extends StatelessWidget {
+  static const String routeName = 'cartScreenProductDetails';
 
-  const CartScreen({Key? key}) : super(key: key);
+  const CartScreenProductDetails({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 60,
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(
+              Icons.arrow_back_ios_new_rounded,
+              color: Colors.grey[700],
+            )),
         flexibleSpace: ClipRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 100, sigmaY: 500),
@@ -130,9 +138,9 @@ class CartScreen extends StatelessWidget {
                                               text: TextSpan(
                                                 children: <TextSpan>[
                                                   TextSpan(
-                                                    text: 'GHS ',
+                                                    text: 'GHC  ',
                                                     style: TextStyle(
-                                                        fontSize: 14,
+                                                        fontSize: 12,
                                                         color: Colors.black,
                                                         fontWeight:
                                                             FontWeight.bold),
@@ -142,7 +150,7 @@ class CartScreen extends StatelessWidget {
                                                         .getItems[index].price
                                                         .toStringAsFixed(2),
                                                     style: TextStyle(
-                                                      fontSize: 14,
+                                                      fontSize: 18,
                                                       fontWeight:
                                                           FontWeight.w500,
                                                       color: Colors.black,
