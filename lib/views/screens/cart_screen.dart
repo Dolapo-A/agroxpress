@@ -372,7 +372,7 @@ class CartScreen extends StatelessWidget {
                       TextSpan(
                         text: Provider.of<CartProvider>(context)
                             .totalPrice
-                            .toStringAsFixed(2)
+                            .toStringAsFixed(1)
                             .toString(),
                         style: TextStyle(
                             fontSize: 16,
