@@ -64,10 +64,16 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
       );
     } else {
       return Center(
-          child: Text(
-        'Pick an image(s)',
-        style: TextStyle(fontSize: 18),
-      ));
+        //     child: Text(
+        //   'Pick an image(s)',
+        //   style: TextStyle(fontSize: 18),
+        // ),
+        child: Icon(
+          Icons.photo_camera_back_sharp,
+          size: 40,
+          color: Colors.grey,
+        ),
+      );
     }
   }
 
@@ -145,7 +151,7 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20),
+          padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
           child: SingleChildScrollView(
             child: Form(
               key: _formKey,

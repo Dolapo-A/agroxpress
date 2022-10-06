@@ -53,6 +53,10 @@ dependencies:
   badges: ^2.0.3
   font_awesome_flutter: ^10.1.0
   cached_network_image: ^3.2.2
+  firebase_core_web: ^1.7.2
+  sn_progress_dialog: ^1.0.8
+  intl: ^0.17.0
+  fl_chart: ^0.55.2
 
 flutter_icons:
   android: "launcher_icon"

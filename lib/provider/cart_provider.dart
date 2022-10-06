@@ -12,6 +12,16 @@ class CartProvider extends ChangeNotifier {
     return _list.length;
   }
 
+  double get totalPrice {
+    var total = 0.00;
+
+    for (var item in _list) {
+      total += item.price * item.quantity;
+    }
+
+    return total;
+  }
+
   void addItem(String name, double price, int quantity, int inStock,
       List imagesUrl, String documentId, String sellerUid) {
     final product = Product(
@@ -25,6 +35,26 @@ class CartProvider extends ChangeNotifier {
 
     _list.add(product);
 
+    notifyListeners();
+  }
+
+  void increament(Product product) {
+    product.increase();
+    notifyListeners();
+  }
+
+  void decreament(Product product) {
+    product.decrease();
+    notifyListeners();
+  }
+
+  void removeItem(Product product) {
+    _list.remove(product);
+    notifyListeners();
+  }
+
+  void clearcart() {
+    _list.clear();
     notifyListeners();
   }
 }

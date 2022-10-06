@@ -1,24 +1,34 @@
 import 'package:agroxpresss/const.dart';
+import 'package:agroxpresss/controllers/currency_sign_controller.dart';
+import 'package:agroxpresss/provider/wishlist_provider.dart';
 import 'package:agroxpresss/views/detail/product_detail_screen.dart';
 import 'package:badges/badges.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:collection/collection.dart';
 
-class ProductModel extends StatelessWidget {
+class ProductModel extends StatefulWidget {
   final dynamic products;
   const ProductModel({required this.products, Key? key}) : super(key: key);
 
+  @override
+  State<ProductModel> createState() => _ProductModelState();
+}
+
+class _ProductModelState extends State<ProductModel> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         Navigator.push(context, MaterialPageRoute(builder: (context) {
           return ProductDetailScreen(
-            productList: products,
+            productList: widget.products,
           );
         }));
       },
       child: Padding(
-        padding: const EdgeInsets.only(left: 15, right: 15, top: 20),
+        padding: const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 9),
         child: Stack(
           children: [
             Container(
@@ -30,8 +40,8 @@ class ProductModel extends StatelessWidget {
                     BoxShadow(
                         color: Color.fromARGB(59, 21, 21, 21),
                         spreadRadius: 1,
-                        blurRadius: 60,
-                        offset: Offset(0, 10))
+                        blurRadius: 50,
+                        offset: Offset(0, 5))
                   ]),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -40,28 +50,40 @@ class ProductModel extends StatelessWidget {
                     borderRadius: BorderRadius.only(
                         topRight: Radius.circular(10),
                         topLeft: Radius.circular(10)),
-                    child: Container(
-                      constraints: BoxConstraints(
-                        // minHeight: 100,
-                        maxHeight: 130,
-                      ),
-                      // child: Image.network(
-                      //   products['productImage'][0],
-                      //   fit: BoxFit.fitWidth,
-                      //   loadingBuilder: ,
-                      // ),
-                      // child: ca,
-                    ),
+                    child: SizedBox(
+                        height: 125,
+                        child: CachedNetworkImage(
+                            fit: BoxFit.cover,
+                            imageUrl: widget.products['productImage'][0],
+                            placeholder: (context, url) {
+                              return LinearProgressIndicator(
+                                minHeight: 2,
+                                backgroundColor:
+                                    Color.fromARGB(77, 67, 115, 102),
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                    Color.fromARGB(208, 67, 115, 102)),
+                              );
+                              // return Icon(Icons.home);
+                            },
+                            errorWidget: (context, url, error) {
+                              return Icon(
+                                Icons.image_not_supported_rounded,
+                                color: Colors.grey[400],
+                              );
+                            })),
                   ),
                   SizedBox(
                     height: 5,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
+                    padding: const EdgeInsets.only(left: 10.0, right: 10),
                     child: Text(
-                      products['productName'],
+                      widget.products['productName'],
+                      overflow: TextOverflow.fade,
+                      softWrap: false,
                       textAlign: TextAlign.left,
-                      style: TextStyle(fontSize: 17),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),
                   SizedBox(
@@ -78,7 +100,7 @@ class ProductModel extends StatelessWidget {
                               color: grainsColor,
                               borderRadius: BorderRadius.circular(10)),
                           child: Text(
-                            products['category'],
+                            widget.products['category'],
                             // textAlign: TextAlign.left,
                             style: TextStyle(color: Colors.white, fontSize: 12),
                           ),
@@ -96,13 +118,69 @@ class ProductModel extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('C ' + products['price'].toString()),
+                        Flexible(
+                          child: RichText(
+                              text: TextSpan(children: <TextSpan>[
+                            TextSpan(
+                                text: getCurrency(),
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    overflow: TextOverflow.ellipsis,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold)),
+                            TextSpan(
+                              text: widget.products['price'].toString(),
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black,
+                                  overflow: TextOverflow.ellipsis,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(
+                              text: '/KG',
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey,
+                                  overflow: TextOverflow.ellipsis,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ])),
+                        ),
                         IconButton(
-                            onPressed: () {},
-                            icon: Icon(
-                              Icons.favorite_outline,
-                              // size: 20,
-                            ))
+                            onPressed: () {
+                              Provider.of<WishListProvider>(context,
+                                              listen: false)
+                                          .getWishItems
+                                          .firstWhereOrNull((wish) =>
+                                              wish.documentId ==
+                                              widget.products['productId']) !=
+                                      null
+                                  ? context
+                                      .read<WishListProvider>()
+                                      .removeWish(widget.products['productId'])
+                                  : Provider.of<WishListProvider>(context,
+                                          listen: false)
+                                      .addWishItem(
+                                          widget.products['productName'],
+                                          widget.products['price'],
+                                          1,
+                                          widget.products['inStock'],
+                                          widget.products['productImage'],
+                                          widget.products['productId'],
+                                          widget.products['sellerUid']);
+                            },
+                            icon: context
+                                        .watch<WishListProvider>()
+                                        .getWishItems
+                                        .firstWhereOrNull((wish) =>
+                                            wish.documentId ==
+                                            widget.products['productId']) !=
+                                    null
+                                ? Icon(
+                                    Icons.favorite,
+                                    color: Colors.red,
+                                  )
+                                : Icon(Icons.favorite_outline_outlined)),
                       ],
                     ),
                   ),

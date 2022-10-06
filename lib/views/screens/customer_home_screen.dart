@@ -1,5 +1,7 @@
+import 'dart:math';
 import 'dart:ui';
 
+import 'package:agroxpresss/views/inner_screens/search_screen.dart';
 import 'package:agroxpresss/views/screens/cart_screen.dart';
 import 'package:agroxpresss/views/screens/category_screen.dart';
 import 'package:agroxpresss/views/screens/home_screen.dart';
@@ -22,7 +24,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
 
   final List<Widget> page = [
     HomeScreen(),
-    CategoryScreen(),
+    CategorySearchScreen(products: e),
     StoreScreen(),
     CartScreen(),
     ProfileScreen(),

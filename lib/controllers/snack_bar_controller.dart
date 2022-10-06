@@ -8,6 +8,7 @@ snackBar(String title, BuildContext context) {
       backgroundColor: Color(0xff437366),
       content: Text(
         title,
+        textAlign: TextAlign.center,
         style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w400,

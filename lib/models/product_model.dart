@@ -15,4 +15,14 @@ class Product {
       required this.imagesUrl,
       required this.documentId,
       required this.sellerUid});
+
+  void increase() {
+    // quantity <= inStock ? quantity = inStock :
+    quantity++;
+  }
+
+  void decrease() {
+    // quantity <= 1 ? quantity = 0 :
+    quantity--;
+  }
 }

@@ -50,17 +50,17 @@ class _fruitsandVegetablesGalleryScreenState
         }
 
         return GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisExtent: 250,
-
-            // crossAxisSpacing: 25,
-            // mainAxisSpacing: 20
-          ),
+          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 230,
+              childAspectRatio: 3,
+              mainAxisExtent: 250),
           shrinkWrap: true,
           itemCount: snapshot.data!.docs.length,
           // crossAxisCount: 2,
-          itemBuilder: (BuildContext context, int index) {
+          itemBuilder: (
+            BuildContext context,
+            int index,
+          ) {
             return ProductModel(
               products: snapshot.data!.docs[index],
             );

@@ -50,13 +50,10 @@ class _tuberCropsScreenState extends State<tuberCropsScreen> {
         return GridView.builder(
           shrinkWrap: true,
           itemCount: snapshot.data!.docs.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisExtent: 250,
-
-            // crossAxisSpacing: 25,
-            // mainAxisSpacing: 20
-          ),
+          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 230,
+              childAspectRatio: 3,
+              mainAxisExtent: 250),
           // crossAxisCount: 2,
           itemBuilder: (BuildContext context, int index) {
             return ProductModel(

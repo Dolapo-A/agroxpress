@@ -248,7 +248,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     RichText(
                         // key: _textKey,
                         text: TextSpan(children: <TextSpan>[
-                      const TextSpan(
+                      TextSpan(
                         text: "Don't have an account? ",
                         style: TextStyle(
                           fontSize: 16,
@@ -258,8 +258,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       TextSpan(
                           text: 'Sign Up',
-                          style: const TextStyle(
-                              color: Color(0xff437366), fontSize: 14),
+                          style:
+                              TextStyle(color: Color(0xff437366), fontSize: 14),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () =>
                                 Navigator.of(context).push(PageRouteBuilder(

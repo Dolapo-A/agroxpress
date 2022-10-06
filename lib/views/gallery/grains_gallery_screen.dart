@@ -3,9 +3,6 @@ import 'package:agroxpresss/views/screens/widget/products_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
-import 'package:staggered_grid_view_flutter/widgets/staggered_grid_view.dart';
-import 'package:staggered_grid_view_flutter/widgets/staggered_tile.dart';
 
 class grainsGalleryScreen extends StatefulWidget {
   const grainsGalleryScreen({Key? key}) : super(key: key);
@@ -48,19 +45,20 @@ class _grainsGalleryScreenState extends State<grainsGalleryScreen> {
         }
 
         return GridView.builder(
-          // shrinkWrap: true,
-          itemCount: snapshot.data!.docs.length,
-          // crossAxisCount: 2,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisExtent: 250,
+          shrinkWrap: true,
 
-            // crossAxisSpacing: 25,
-            // mainAxisSpacing: 20
-          ),
+          itemCount: snapshot.data!.docs.length,
+
+          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 230,
+              childAspectRatio: 3,
+              mainAxisExtent: 250),
           itemBuilder: (BuildContext context, int index) {
-            return ProductModel(
-              products: snapshot.data!.docs[index],
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 0.0),
+              child: ProductModel(
+                products: snapshot.data!.docs[index],
+              ),
             );
           },
           // staggeredTileBuilder: (context) => StaggeredTile.fit(1)

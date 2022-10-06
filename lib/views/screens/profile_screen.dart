@@ -1,10 +1,18 @@
 import 'package:agroxpresss/const.dart';
+import 'package:agroxpresss/views/inner_screens/customer_order_screen.dart';
+import 'package:agroxpresss/views/minor_screens/place_order_screen.dart';
+import 'package:agroxpresss/views/screens/auth/forgot_password_profile_screen.dart';
+import 'package:agroxpresss/views/screens/auth/forgot_password_screen.dart';
 import 'package:agroxpresss/views/screens/auth/user_login_screen.dart';
+import 'package:agroxpresss/views/screens/cart_screen%20_product_details.dart';
 import 'package:agroxpresss/views/screens/cart_screen.dart';
+import 'package:agroxpresss/views/screens/wishlist_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+
+import '../../controllers/alert_dialog.dart';
 
 class ProfileScreen extends StatefulWidget {
   static const String routeName = 'profileScreen';
@@ -232,7 +240,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SliverAppBar(
                   // automaticallyImplyLeading: false,
                   backgroundColor: Colors.white,
-                  expandedHeight: 200,
+                  expandedHeight: 220,
                   flexibleSpace: LayoutBuilder(
                     builder: (context, constraints) {
                       return FlexibleSpaceBar(
@@ -257,7 +265,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       children: [
                                         CircleAvatar(
                                             radius: 30,
-                                            backgroundColor: generalColor,
+                                            backgroundColor: Colors.grey,
                                             backgroundImage: NetworkImage(
                                                 '${data['image']}')),
                                         SizedBox(
@@ -358,7 +366,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => CartScreen()));
+                                        builder: (context) =>
+                                            CartScreenProductDetails()));
                               },
                               child: ListTile(
                                 horizontalTitleGap: 5,
@@ -376,12 +385,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 thickness: 0.5,
                               ),
                             ),
-                            ListTile(
-                              horizontalTitleGap: 5,
-                              title: Text('Orders'),
-                              leading: Icon(
-                                Icons.delivery_dining_rounded,
-                                color: Colors.grey,
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return CustomerOrderScreen();
+                                }));
+                              },
+                              child: ListTile(
+                                horizontalTitleGap: 5,
+                                title: Text('Orders'),
+                                leading: Icon(
+                                  Icons.delivery_dining_rounded,
+                                  color: Colors.grey,
+                                ),
                               ),
                             ),
                             Padding(
@@ -391,12 +408,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 thickness: 0.5,
                               ),
                             ),
-                            ListTile(
-                              horizontalTitleGap: 5,
-                              title: Text('Wishlist'),
-                              leading: Icon(
-                                Icons.heart_broken,
-                                color: Colors.grey,
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return WishlistScreen();
+                                }));
+                              },
+                              child: ListTile(
+                                horizontalTitleGap: 5,
+                                title: Text('Wishlist'),
+                                leading: Icon(
+                                  Icons.favorite,
+                                  color: Colors.grey,
+                                ),
                               ),
                             ),
                             Padding(
@@ -406,21 +431,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 thickness: 0.5,
                               ),
                             ),
-                            ListTile(
-                              horizontalTitleGap: 5,
-                              title: Text('Forgot Password?'),
-                              leading: Icon(
-                                Icons.lock,
-                                color: Colors.grey,
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return ForgotPasswordProfileScreen();
+                                }));
+                              },
+                              child: ListTile(
+                                horizontalTitleGap: 5,
+                                title: Text('Change password'),
+                                leading: Icon(
+                                  Icons.lock,
+                                  color: Colors.grey,
+                                ),
                               ),
                             ),
                             Divider(
                               color: Colors.grey.shade200,
                               thickness: 10,
                             ),
-                            GestureDetector(
+                            InkWell(
                               onTap: () {
-                                logOut();
+                                MyAlertDilaog.showMyDialog(
+                                    context: context,
+                                    title: 'Log out',
+                                    content: 'Do you want to log out?',
+                                    tabNo: () {
+                                      Navigator.pop(context);
+                                    },
+                                    tabYes: () {
+                                      logOut();
+                                    });
                               },
                               child: ListTile(
                                 horizontalTitleGap: 5,
