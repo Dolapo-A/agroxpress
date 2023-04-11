@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:agroxpresss/const.dart';
+import 'package:agroxpresss/views/inner_screens/vendors_search_screen.dart';
 import 'package:agroxpresss/views/minor_screens/visit_store_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -15,26 +16,72 @@ class StoreScreen extends StatelessWidget {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-          toolbarHeight: 60,
-          flexibleSpace: ClipRect(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 100, sigmaY: 500),
-              child: Container(color: Colors.transparent),
+        toolbarHeight: 80,
+        flexibleSpace: ClipRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 100, sigmaY: 500),
+            child: Container(color: Colors.transparent),
+          ),
+        ),
+        bottom: PreferredSize(
+            child: Container(
+              color: Colors.grey,
+              height: 1.0,
+            ),
+            preferredSize: Size.fromHeight(4.0)),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        title: Padding(
+          padding: const EdgeInsets.only(top: 0.0),
+          child: GestureDetector(
+            onTap: () {
+              Navigator.of(context)
+                  .push(MaterialPageRoute(builder: (BuildContext builder) {
+                return VendorSearchScreen(
+                  products: required,
+                );
+              }));
+            },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text(
+                  'Stores',
+                  style: TextStyle(color: Colors.black, fontSize: 20),
+                ),
+                Container(
+                  height: 40,
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 1.5, color: Colors.grey),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Icon(
+                          Icons.search,
+                          color: Colors.grey,
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          'Search Stores',
+                          style: TextStyle(color: Colors.grey, fontSize: 16),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-          bottom: PreferredSize(
-              child: Container(
-                color: Colors.grey,
-                height: 1.0,
-              ),
-              preferredSize: Size.fromHeight(4.0)),
-          centerTitle: true,
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          title: Text(
-            'Stores',
-            style: TextStyle(color: Colors.black, fontSize: 20),
-          )),
+        ),
+      ),
       body: StreamBuilder<QuerySnapshot>(
         stream: firestore.collection('vendors').snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -127,7 +174,7 @@ class StoreScreen extends StatelessWidget {
 
           return Center(
             child: Text(
-              'No Stores available yet\n🙁',
+              'No Stores available at the moment',
               textAlign: TextAlign.center,
             ),
           );

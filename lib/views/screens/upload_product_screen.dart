@@ -22,7 +22,10 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
   final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   final ImagePicker _picker = ImagePicker();
+  int? discount = 0;
+
   String? categoryValue = null;
   bool _isLoading = false;
 
@@ -122,7 +125,7 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
         'sellerUid': FirebaseAuth.instance.currentUser!.uid,
         // 'VendorName': FirebaseAuth.instance.currentUser!.uid,
         'productImage': imageUrlList,
-        'discount': 0,
+        'discount': discount,
       }).whenComplete(() {
         setState(() {
           imageList = [];
@@ -151,7 +154,7 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
+          padding: const EdgeInsets.only(left: 10, right: 10, top: 20),
           child: SingleChildScrollView(
             child: Form(
               key: _formKey,
@@ -226,10 +229,11 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
                     ),
                   ),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    // crossAxisAlignment: cross,
                     children: [
                       SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.425,
+                        width: MediaQuery.of(context).size.width * 0.30,
                         child: TextFormField(
                           validator: (value) {
                             if (value!.isEmpty) {
@@ -240,7 +244,7 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
                           },
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
-                            labelText: 'Price',
+                            labelText: 'Price/Kg',
                             labelStyle: const TextStyle(
                               color: Colors.grey,
                               fontSize: 16,
@@ -277,10 +281,7 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
                         ),
                       ),
                       SizedBox(
-                        width: 15,
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.425,
+                        width: MediaQuery.of(context).size.width * 0.30,
                         child: TextFormField(
                           validator: (value) {
                             if (value!.isEmpty) {
@@ -324,6 +325,57 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
                           ),
                           onSaved: (value) {
                             quantity = int.parse(value!);
+                          },
+                        ),
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.30,
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return null;
+                            } else if (value.isValidDiscount() != true) {
+                              return 'Invalid discount';
+                            }
+                          },
+                          keyboardType: TextInputType.number,
+                          maxLength: 2,
+                          // maxLengthEnforcement: ,
+                          // enableIMEPersonalizedLearning: true,
+                          decoration: InputDecoration(
+                            labelText: 'Discount %',
+                            labelStyle: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 16,
+                            ),
+                            hintText: 'Discount % ',
+                            isDense: true,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 15,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.grey),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.grey, width: 2),
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            //for the errors
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                              borderSide: const BorderSide(
+                                color: Colors.red,
+                                width: 2.0,
+                              ),
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                          ),
+                          onSaved: (value) {
+                            discount = int.parse(value!);
                           },
                         ),
                       ),
@@ -472,5 +524,11 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
         ],
       ),
     );
+  }
+}
+
+extension DiscountValidator on String {
+  bool isValidDiscount() {
+    return RegExp(r'^([0-9]*)$').hasMatch(this);
   }
 }

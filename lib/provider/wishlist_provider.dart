@@ -13,8 +13,15 @@ class WishListProvider extends ChangeNotifier {
     return _list.length;
   }
 
-  Future<void> addWishItem(String name, double price, int quantity, int inStock,
-      List imagesUrl, String documentId, String sellerUid) async {
+  Future<void> addWishItem(
+      String name,
+      double price,
+      int quantity,
+      int inStock,
+      List imagesUrl,
+      String documentId,
+      String sellerUid,
+      String category) async {
     final product = Product(
         name: name,
         price: price,
@@ -22,7 +29,8 @@ class WishListProvider extends ChangeNotifier {
         inStock: inStock,
         imagesUrl: imagesUrl,
         documentId: documentId,
-        sellerUid: sellerUid);
+        sellerUid: sellerUid,
+        category: category);
 
     _list.add(product);
 

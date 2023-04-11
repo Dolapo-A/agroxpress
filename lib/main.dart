@@ -60,7 +60,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
           textTheme: GoogleFonts.poppinsTextTheme(),
           visualDensity: VisualDensity.adaptivePlatformDensity),
-      initialRoute: SplashScreen.routeName,
+      initialRoute: VendorLoginScreen.routeName,
       routes: {
         SplashScreen.routeName: (context) => SplashScreen(),
         CustomerHomeScreen.routeName: (context) => CustomerHomeScreen(),

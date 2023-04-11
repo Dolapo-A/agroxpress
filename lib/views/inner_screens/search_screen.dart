@@ -1,6 +1,7 @@
 // import 'dart:js';
 
 import 'package:agroxpresss/const.dart';
+import 'package:agroxpresss/controllers/currency_sign_controller.dart';
 import 'package:agroxpresss/views/detail/product_detail_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -115,30 +116,92 @@ class _SearchScreenState extends State<SearchScreen> {
                                   top: 10.0, bottom: 10.0),
                               child: Row(
                                 children: [
-                                  Container(
-                                    height: 100,
-                                    width: 100,
-                                    child: CachedNetworkImage(
-                                      fit: BoxFit.cover,
-                                      imageUrl: e['productImage'][0],
-                                      placeholder: (context, url) {
-                                        return LinearProgressIndicator(
-                                          minHeight: 2,
-                                          backgroundColor:
-                                              Color.fromARGB(77, 67, 115, 102),
-                                          valueColor:
-                                              AlwaysStoppedAnimation<Color>(
-                                                  Color.fromARGB(
-                                                      208, 67, 115, 102)),
-                                        );
-                                      },
-                                      errorWidget: (context, url, error) {
-                                        return Icon(
-                                          Icons.image_not_supported_rounded,
-                                          color: Colors.grey[400],
-                                        );
-                                      },
-                                    ),
+                                  Stack(
+                                    children: [
+                                      Container(
+                                        height: 80,
+                                        width: 80,
+                                        child: CachedNetworkImage(
+                                          fit: BoxFit.cover,
+                                          imageUrl: e['productImage'][0],
+                                          placeholder: (context, url) {
+                                            return LinearProgressIndicator(
+                                              minHeight: 2,
+                                              backgroundColor: Color.fromARGB(
+                                                  77, 67, 115, 102),
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
+                                                      Color.fromARGB(
+                                                          208, 67, 115, 102)),
+                                            );
+                                          },
+                                          errorWidget: (context, url, error) {
+                                            return Icon(
+                                              Icons.image_not_supported_rounded,
+                                              color: Colors.grey[400],
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                      e['discount'] != 0
+                                          ? Positioned(
+                                              left: 0,
+                                              top: 5,
+                                              child: Container(
+                                                height: 20,
+                                                width: 50,
+                                                decoration: BoxDecoration(
+                                                    color: generalColor,
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                            topRight: Radius
+                                                                .circular(5),
+                                                            bottomRight:
+                                                                Radius.circular(
+                                                                    5))),
+                                                child: Center(
+                                                  child: Text(
+                                                    'Save ${e['discount'].toString()} %',
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 10),
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                          : Container(
+                                              color: Colors.transparent,
+                                            ),
+                                      Positioned(
+                                        left: 0,
+                                        top: 5,
+                                        child: e['inStock'] == 0
+                                            ? Container(
+                                                height: 20,
+                                                width: 60,
+                                                decoration: BoxDecoration(
+                                                    color: Colors.red,
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                            topRight: Radius
+                                                                .circular(5),
+                                                            bottomRight:
+                                                                Radius.circular(
+                                                                    5))),
+                                                child: Center(
+                                                  child: Text(
+                                                    'Out of Stock',
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 9),
+                                                  ),
+                                                ),
+                                              )
+                                            : Container(
+                                                color: Colors.transparent,
+                                              ),
+                                      ),
+                                    ],
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.all(10.0),
@@ -150,9 +213,63 @@ class _SearchScreenState extends State<SearchScreen> {
                                       children: [
                                         Text(
                                           e['productName'],
-                                          style: TextStyle(fontSize: 18),
+                                          style: TextStyle(fontSize: 16),
                                         ),
-                                        Text(e['price'].toStringAsFixed(2)),
+                                        // Text(e['price'].toStringAsFixed(2)),
+                                        RichText(
+                                            text: TextSpan(children: <TextSpan>[
+                                          TextSpan(
+                                              text: getCurrency(),
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold)),
+                                          TextSpan(
+                                              text: e['price'].toString(),
+                                              style: e['discount'] != 0
+                                                  ? TextStyle(
+                                                      color: Colors.grey,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      fontSize: 14,
+                                                      decoration: TextDecoration
+                                                          .lineThrough,
+                                                      fontWeight:
+                                                          FontWeight.bold)
+                                                  : TextStyle(
+                                                      color: Colors.black,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.bold)),
+                                          TextSpan(text: ' '),
+                                          e['discount'] != 0
+                                              ? TextSpan(
+                                                  text: ((1 -
+                                                              (e['discount'] /
+                                                                  100)) *
+                                                          e['price'])
+                                                      .toStringAsFixed(2),
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.bold))
+                                              : TextSpan(),
+                                          TextSpan(
+                                            text: '/KG',
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.grey,
+                                                overflow: TextOverflow.ellipsis,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ])),
                                       ],
                                     ),
                                   ),

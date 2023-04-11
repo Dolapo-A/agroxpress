@@ -53,7 +53,7 @@ class _tuberCropsScreenState extends State<tuberCropsScreen> {
           gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: 230,
               childAspectRatio: 3,
-              mainAxisExtent: 250),
+              mainAxisExtent: 240),
           // crossAxisCount: 2,
           itemBuilder: (BuildContext context, int index) {
             return ProductModel(

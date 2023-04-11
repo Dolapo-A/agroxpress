@@ -2,12 +2,19 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-class EditProfileScreen extends StatelessWidget {
+class EditProfileScreen extends StatefulWidget {
+  // final dynamic data;
+  // const EditProfileScreen({Key? key, required this.data}) : super(key: key);
+  @override
+  State<EditProfileScreen> createState() => _EditProfileScreenState();
+}
+
+class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          toolbarHeight: 80,
+          toolbarHeight: 60,
           leading: IconButton(
               onPressed: () {
                 Navigator.pop(context);
@@ -33,8 +40,28 @@ class EditProfileScreen extends StatelessWidget {
           backgroundColor: Colors.transparent,
           title: Text(
             'Edit Profile',
-            style: TextStyle(color: Colors.black, fontSize: 24),
+            style: TextStyle(color: Colors.black, fontSize: 22),
           )),
+      body: Column(
+        children: [
+          Column(
+            children: [
+              Text(
+                'Store logo',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+              ),
+              Row(
+                children: [
+                  CircleAvatar(
+                    radius: 60,
+                  ),
+                  TextButton(onPressed: () {}, child: Text('Edit image'))
+                ],
+              )
+            ],
+          )
+        ],
+      ),
     );
   }
 }

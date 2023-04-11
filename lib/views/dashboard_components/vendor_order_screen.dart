@@ -1,9 +1,9 @@
 import 'dart:ui';
 
 import 'package:agroxpresss/const.dart';
-import 'package:agroxpresss/views/dashboard_screens/order%20status%20screens/delivered_screen.dart';
-import 'package:agroxpresss/views/dashboard_screens/order%20status%20screens/preparing_screen.dart';
-import 'package:agroxpresss/views/dashboard_screens/order%20status%20screens/shipping_screen.dart';
+import 'package:agroxpresss/views/dashboard_components/order%20status%20screens/delivered_screen.dart';
+import 'package:agroxpresss/views/dashboard_components/order%20status%20screens/preparing_screen.dart';
+import 'package:agroxpresss/views/dashboard_components/order%20status%20screens/shipping_screen.dart';
 import 'package:flutter/material.dart';
 
 class VendorOrderScreen extends StatelessWidget {
@@ -13,7 +13,7 @@ class VendorOrderScreen extends StatelessWidget {
       length: 3,
       child: Scaffold(
         appBar: AppBar(
-            toolbarHeight: 80,
+            toolbarHeight: 60,
             leading: IconButton(
                 onPressed: () {
                   Navigator.pop(context);
@@ -58,7 +58,7 @@ class VendorOrderScreen extends StatelessWidget {
             backgroundColor: Colors.transparent,
             title: Text(
               'Orders',
-              style: TextStyle(color: Colors.black, fontSize: 24),
+              style: TextStyle(color: Colors.black, fontSize: 20),
             )),
         body: TabBarView(children: [
           PreparingScreen(),

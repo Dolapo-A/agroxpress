@@ -24,7 +24,7 @@ class WishlistScreen extends StatelessWidget {
               Icons.arrow_back_ios_new_rounded,
               color: Colors.grey[700],
             )),
-        toolbarHeight: 80,
+        toolbarHeight: 60,
         flexibleSpace: ClipRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 100, sigmaY: 500),

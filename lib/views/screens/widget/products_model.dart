@@ -1,10 +1,12 @@
 import 'package:agroxpresss/const.dart';
 import 'package:agroxpresss/controllers/currency_sign_controller.dart';
+import 'package:agroxpresss/models/product_model.dart';
 import 'package:agroxpresss/provider/wishlist_provider.dart';
 import 'package:agroxpresss/views/detail/product_detail_screen.dart';
 import 'package:badges/badges.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:provider/provider.dart';
 import 'package:collection/collection.dart';
 
@@ -19,6 +21,7 @@ class ProductModel extends StatefulWidget {
 class _ProductModelState extends State<ProductModel> {
   @override
   Widget build(BuildContext context) {
+    var onSale = widget.products['discount'];
     return GestureDetector(
       onTap: () {
         Navigator.push(context, MaterialPageRoute(builder: (context) {
@@ -73,7 +76,7 @@ class _ProductModelState extends State<ProductModel> {
                             })),
                   ),
                   SizedBox(
-                    height: 5,
+                    height: 0,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 10.0, right: 10),
@@ -102,7 +105,7 @@ class _ProductModelState extends State<ProductModel> {
                           child: Text(
                             widget.products['category'],
                             // textAlign: TextAlign.left,
-                            style: TextStyle(color: Colors.white, fontSize: 12),
+                            style: TextStyle(color: Colors.white, fontSize: 10),
                           ),
                         ),
                       ],
@@ -126,20 +129,40 @@ class _ProductModelState extends State<ProductModel> {
                                 style: TextStyle(
                                     color: Colors.black,
                                     overflow: TextOverflow.ellipsis,
-                                    fontSize: 16,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.bold)),
                             TextSpan(
-                              text: widget.products['price'].toString(),
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.black,
-                                  overflow: TextOverflow.ellipsis,
-                                  fontWeight: FontWeight.bold),
-                            ),
+                                text: widget.products['price'].toString(),
+                                style: onSale != 0
+                                    ? TextStyle(
+                                        color: Colors.grey,
+                                        overflow: TextOverflow.ellipsis,
+                                        fontSize: 14,
+                                        decoration: TextDecoration.lineThrough,
+                                        fontWeight: FontWeight.bold)
+                                    : TextStyle(
+                                        color: Colors.black,
+                                        overflow: TextOverflow.ellipsis,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold)),
+                            TextSpan(text: ''),
+                            onSale != 0
+                                ? TextSpan(
+                                    text: ((1 -
+                                                (widget.products['discount'] /
+                                                    100)) *
+                                            widget.products['price'])
+                                        .toStringAsFixed(2),
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        overflow: TextOverflow.ellipsis,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold))
+                                : TextSpan(),
                             TextSpan(
                               text: '/KG',
                               style: TextStyle(
-                                  fontSize: 16,
+                                  fontSize: 14,
                                   color: Colors.grey,
                                   overflow: TextOverflow.ellipsis,
                                   fontWeight: FontWeight.bold),
@@ -147,6 +170,7 @@ class _ProductModelState extends State<ProductModel> {
                           ])),
                         ),
                         IconButton(
+                            iconSize: 20,
                             onPressed: () {
                               Provider.of<WishListProvider>(context,
                                               listen: false)
@@ -161,13 +185,15 @@ class _ProductModelState extends State<ProductModel> {
                                   : Provider.of<WishListProvider>(context,
                                           listen: false)
                                       .addWishItem(
-                                          widget.products['productName'],
-                                          widget.products['price'],
-                                          1,
-                                          widget.products['inStock'],
-                                          widget.products['productImage'],
-                                          widget.products['productId'],
-                                          widget.products['sellerUid']);
+                                      widget.products['productName'],
+                                      widget.products['price'],
+                                      1,
+                                      widget.products['inStock'],
+                                      widget.products['productImage'],
+                                      widget.products['productId'],
+                                      widget.products['sellerUid'],
+                                      widget.products['category'],
+                                    );
                             },
                             icon: context
                                         .watch<WishListProvider>()
@@ -179,6 +205,7 @@ class _ProductModelState extends State<ProductModel> {
                                 ? Icon(
                                     Icons.favorite,
                                     color: Colors.red,
+                                    size: 20,
                                   )
                                 : Icon(Icons.favorite_outline_outlined)),
                       ],
@@ -187,18 +214,51 @@ class _ProductModelState extends State<ProductModel> {
                 ],
               ),
             ),
+            onSale != 0
+                ? Positioned(
+                    left: 0,
+                    top: 10,
+                    child: Container(
+                      height: 25,
+                      width: 65,
+                      decoration: BoxDecoration(
+                          color: generalColor,
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(10),
+                              bottomRight: Radius.circular(10))),
+                      child: Center(
+                        child: Text(
+                          'Save ${widget.products['discount'].toString()}%',
+                          style: TextStyle(color: Colors.white, fontSize: 12),
+                        ),
+                      ),
+                    ),
+                  )
+                : Container(
+                    color: Colors.transparent,
+                  ),
             Positioned(
-              left: 10,
+              left: 0,
               top: 10,
-              child: Badge(
-                toAnimate: true,
-                animationType: BadgeAnimationType.fade,
-                shape: BadgeShape.square,
-                badgeColor: generalColor,
-                borderRadius: BorderRadius.circular(10),
-                badgeContent:
-                    Text('New Arrival', style: TextStyle(color: Colors.white)),
-              ),
+              child: widget.products['inStock'] == 0
+                  ? Container(
+                      height: 25,
+                      width: 80,
+                      decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(10),
+                              bottomRight: Radius.circular(10))),
+                      child: Center(
+                        child: Text(
+                          'Out of Stock',
+                          style: TextStyle(color: Colors.white, fontSize: 12),
+                        ),
+                      ),
+                    )
+                  : Container(
+                      color: Colors.transparent,
+                    ),
             ),
           ],
         ),

@@ -1,12 +1,12 @@
 import 'dart:ui';
 
 import 'package:agroxpresss/const.dart';
-import 'package:agroxpresss/views/dashboard_screens/vendor_balance_screen.dart';
-import 'package:agroxpresss/views/dashboard_screens/vendor_edit_profile_screen.dart';
-import 'package:agroxpresss/views/dashboard_screens/vendor_manage_products_screen.dart';
-import 'package:agroxpresss/views/dashboard_screens/vendor_order_screen.dart';
-import 'package:agroxpresss/views/dashboard_screens/vendor_statistics_screen.dart';
-import 'package:agroxpresss/views/dashboard_screens/vendor_store_screen.dart';
+import 'package:agroxpresss/views/dashboard_components/vendor_balance_screen.dart';
+import 'package:agroxpresss/views/dashboard_components/vendor_edit_profile_screen.dart';
+import 'package:agroxpresss/views/dashboard_components/vendor_manage_products_screen.dart';
+import 'package:agroxpresss/views/dashboard_components/vendor_order_screen.dart';
+import 'package:agroxpresss/views/dashboard_components/vendor_statistics_screen.dart';
+import 'package:agroxpresss/views/dashboard_components/vendor_store_screen.dart';
 import 'package:agroxpresss/views/minor_screens/visit_store_screen.dart';
 import 'package:agroxpresss/views/screens/auth/vendor_login_screen.dart';
 import 'package:agroxpresss/views/screens/vendor_home_screen.dart';
@@ -57,7 +57,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          toolbarHeight: 80,
+          toolbarHeight: 60,
           actions: [
             IconButton(
                 onPressed: () {
@@ -85,7 +85,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           backgroundColor: Colors.transparent,
           title: Text(
             'Dashboard',
-            style: TextStyle(color: Colors.black, fontSize: 24),
+            style: TextStyle(color: Colors.black, fontSize: 20),
           )),
       body: GridView.count(
         padding: EdgeInsets.all(10),
@@ -114,6 +114,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                   ),
                   Text(
                     title[index].toUpperCase(),
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.black,
