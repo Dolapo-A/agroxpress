@@ -1,17 +1,36 @@
 import 'dart:ui';
 
 import 'package:agroxpresss/const.dart';
+import 'package:agroxpresss/controllers/snack_bar_controller.dart';
 import 'package:agroxpresss/views/screens/widget/products_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class VisitStoreScreen extends StatelessWidget {
   final vendorUid;
 
   const VisitStoreScreen({Key? key, this.vendorUid}) : super(key: key);
+
+  // void launchWhatsApp({
+  //   @required int phone,
+  //   @required String message,
+  // }) async {
+  //   String url() {
+  //     if (Platform.isAndroid) {
+  //       return "whatsapp://wa.me/$phone:03452121308:/?text=${Uri.parse(message)}";
+  //     } else {
+  //       return "whatsapp://send?   phone=$phone&text=${Uri.parse(message)}";
+  //     }
+  //   }
+
+  //   if (await canLaunch(url())) {
+  //     await launch(url());
+  //   } else {
+  //     throw 'Could not launch ${url()}';
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +57,13 @@ class VisitStoreScreen extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.done) {
           Map<String, dynamic> data =
               snapshot.data!.data() as Map<String, dynamic>;
+          // var phone = data['phone'];
+          var phone = data['phone'];
+          Uri whatsappUrl = Uri.parse('https://wa.me/$phone');
           return Scaffold(
             extendBodyBehindAppBar: true,
             appBar: AppBar(
-              toolbarHeight: 80,
+              toolbarHeight: 60,
               centerTitle: true,
               flexibleSpace: ClipRect(
                 child: BackdropFilter(
@@ -69,7 +91,7 @@ class VisitStoreScreen extends StatelessWidget {
                   )),
               title: Text(
                 data['storeName'],
-                style: TextStyle(color: Colors.black),
+                style: TextStyle(color: Colors.black, fontSize: 20),
               ),
             ),
             body: StreamBuilder<QuerySnapshot>(
@@ -120,7 +142,41 @@ class VisitStoreScreen extends StatelessWidget {
               },
             ),
             floatingActionButton: FloatingActionButton(
-              onPressed: () {},
+              onPressed: () async {
+                // whatsappUrl.contains(RegExp(source))
+
+                // urlget() {
+                //   _launchURL() async {
+                //     if (await canLaunchUrl(whatsappUrl)) {
+                //       await launchUrl(whatsappUrl);
+                //     } else {
+                //       throw 'Could not launch $whatsappUrl';
+                //     }
+                //   }
+
+                //   WebView(
+                //     initialUrl: 'ttps://wa.me/$phone',
+                //     javascriptMode: JavascriptMode.unrestricted,
+                //     navigationDelegate: (NavigationRequest request) {
+                //       if (request.url
+                //           .startsWith('https://my.redirect.url.com')) {
+                //         print('blocking navigation to $request}');
+                //         _launchURL();
+                //         return NavigationDecision.prevent;
+                //       }
+
+                //       print('allowing navigation to $request');
+                //       return NavigationDecision.navigate;
+                //     },
+                //   );
+                // }
+
+                if (await canLaunchUrl(whatsappUrl)) {
+                  await launchUrl(whatsappUrl);
+                } else {
+                  snackBar('Error', context);
+                }
+              },
               backgroundColor: generalColor,
               child: Icon(
                 FontAwesomeIcons.whatsapp,

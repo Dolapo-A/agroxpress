@@ -87,12 +87,12 @@ class CartScreenProductDetails extends StatelessWidget {
                         return Card(
                           clipBehavior: Clip.hardEdge,
                           child: SizedBox(
-                            height: 100,
+                            height: 80,
                             child: Row(
                               children: [
                                 SizedBox(
-                                    height: 100,
-                                    width: 100,
+                                    height: 80,
+                                    width: 80,
                                     child: CachedNetworkImage(
                                         fit: BoxFit.cover,
                                         imageUrl: cartProvider
@@ -138,7 +138,7 @@ class CartScreenProductDetails extends StatelessWidget {
                                               text: TextSpan(
                                                 children: <TextSpan>[
                                                   TextSpan(
-                                                    text: 'GHC  ',
+                                                    text: 'GHS ',
                                                     style: TextStyle(
                                                         fontSize: 12,
                                                         color: Colors.black,
@@ -150,9 +150,9 @@ class CartScreenProductDetails extends StatelessWidget {
                                                         .getItems[index].price
                                                         .toStringAsFixed(2),
                                                     style: TextStyle(
-                                                      fontSize: 18,
+                                                      fontSize: 14,
                                                       fontWeight:
-                                                          FontWeight.w500,
+                                                          FontWeight.bold,
                                                       color: Colors.black,
                                                     ),
                                                   ),
@@ -160,7 +160,7 @@ class CartScreenProductDetails extends StatelessWidget {
                                               ),
                                             ),
                                             Container(
-                                              // height: 40,
+                                              height: 35,
                                               // width: 40,
                                               decoration: BoxDecoration(
                                                   color: Colors.grey.shade200,
@@ -204,7 +204,8 @@ class CartScreenProductDetails extends StatelessWidget {
                                                                               product.quantity,
                                                                               product.imagesUrl,
                                                                               product.documentId,
-                                                                              product.sellerUid);
+                                                                              product.sellerUid,
+                                                                              product.category);
 
                                                                       context
                                                                           .read<

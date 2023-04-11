@@ -2,15 +2,14 @@ import 'dart:ui';
 
 import 'package:agroxpresss/const.dart';
 import 'package:agroxpresss/controllers/currency_sign_controller.dart';
+import 'package:agroxpresss/payment/paystack_payment.dart';
 import 'package:agroxpresss/provider/cart_provider.dart';
-import 'package:agroxpresss/views/minor_screens/payment_screen.dart';
 import 'package:agroxpresss/views/screens/customer_home_screen.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutterwave_standard/flutterwave.dart';
+// import 'package:flutterwave_standard/view/flutterwave_style.dart';
 import 'package:provider/provider.dart';
 import 'package:sn_progress_dialog/progress_dialog.dart';
 import 'package:uuid/uuid.dart';
@@ -28,15 +27,47 @@ class _PaymentScreenState extends State<PaymentScreen> {
   void showProgress() {
     ProgressDialog progressDialog = ProgressDialog(context: context);
     progressDialog.show(
-      max: 100, msg: 'Please wait',
-      // barrierColor: Colors.white
+        max: 100,
+        msg: 'Confirming your order',
+        barrierColor: Colors.transparent);
+
+    // final plugin = PaystackPlugin();
+  }
+
+  showAlertDialog(BuildContext context) {
+    // Create button
+    Widget okButton = TextButton(
+      child: Text("OK"),
+      onPressed: () {
+        Navigator.of(context).pop(
+          context,
+        );
+      },
+    );
+
+    // Create AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Order Confirmed"),
+      content: Text(
+          "Yayy, Your Order has been confirmed, payment will be made on delivery "),
+      // actions: [
+      //   okButton,
+      // ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 
   @override
   Widget build(BuildContext context) {
     double totalPrice = Provider.of<CartProvider>(context).totalPrice;
-    double totalPaid = Provider.of<CartProvider>(context).totalPrice + 20;
+    double totalPaid = Provider.of<CartProvider>(context).totalPrice + 0;
     // final FirebaseAuth _auth = FirebaseAuth.instance;
     CollectionReference customer =
         FirebaseFirestore.instance.collection('customers');
@@ -57,11 +88,14 @@ class _PaymentScreenState extends State<PaymentScreen> {
           if (snapshot.connectionState == ConnectionState.done) {
             Map<String, dynamic> data =
                 snapshot.data!.data() as Map<String, dynamic>;
-
+            String fullname = data['fullName'];
+            String phone = data['phone'];
+            String email = data['email'];
+            String amount = '${totalPaid.toStringAsFixed(2)}';
             return SafeArea(
               child: Scaffold(
                 appBar: AppBar(
-                    toolbarHeight: 80,
+                    toolbarHeight: 60,
                     leading: IconButton(
                         onPressed: () {
                           Navigator.pop(context);
@@ -84,10 +118,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         preferredSize: Size.fromHeight(4.0)),
                     centerTitle: true,
                     elevation: 0,
-                    backgroundColor: Colors.transparent,
+                    // backgroundColor: Colors.transparent,
+                    backgroundColor: Colors.white,
                     title: Text(
-                      'Confirmation',
-                      style: TextStyle(color: Colors.black, fontSize: 22),
+                      'Payment',
+                      style: TextStyle(color: Colors.black, fontSize: 20),
                     )),
                 body: Padding(
                   padding: const EdgeInsets.all(10.0),
@@ -263,31 +298,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                     selectedItem = value!;
                                   });
                                 },
-                                title: Text('Mobile money'),
+                                title: Text('Mobile money / Master Visa card'),
                                 subtitle: Text(
-                                    'Pay using either MTN, Vodafone or airtelTigo'),
-                              ),
-                              RadioListTile(
-                                value: 3,
-                                groupValue: selectedItem,
-                                onChanged: (int? value) {
-                                  setState(() {
-                                    selectedItem = value!;
-                                  });
-                                },
-                                title: Text('Pay with Card'),
-                                subtitle:
-                                    Text('Pay using either Visa or Mastercard'),
-                              ),
-                              RadioListTile(
-                                value: 4,
-                                groupValue: selectedItem,
-                                onChanged: (int? value) {
-                                  setState(() {
-                                    selectedItem = value!;
-                                  });
-                                },
-                                title: Text('Pay with Stripe'),
+                                    'Pay using either MTN, Vodafone or airtelTigo.\n' +
+                                        'Pay using a visa or mastercard using our flutterwave payment gateway'),
                               ),
                             ],
                           ),
@@ -334,105 +348,249 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                               'Payment from anywhere(in Ghana)',
                                               style: TextStyle(fontSize: 17),
                                             ),
-                                            Container(
-                                              height: 40,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.80,
-                                              decoration: BoxDecoration(
-                                                  color: generalColor,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10)),
-                                              child: MaterialButton(
-                                                onPressed: () async {
-                                                  showProgress();
-                                                  for (var item in context
-                                                      .read<CartProvider>()
-                                                      .getItems) {
-                                                    CollectionReference
-                                                        orderRef =
-                                                        _firestore.collection(
-                                                            'Orders');
-                                                    orderId = Uuid().v4();
-                                                    await orderRef
-                                                        .doc(orderId)
-                                                        .set({
-                                                      'customerId': data['cid'],
-                                                      'customerName':
-                                                          data['fullName'],
-                                                      'phone': data['phone'],
-                                                      'email': data['email'],
-                                                      'address':
-                                                          data['address'],
-                                                      'profileImage':
-                                                          data['image'],
-                                                      'vendorUid':
-                                                          item.sellerUid,
-                                                      'productId':
-                                                          item.documentId,
-                                                      'orderId': orderId,
-                                                      'orderName': item.name,
-                                                      'orderImage':
-                                                          item.imagesUrl.first,
-                                                      'orderQuantity':
-                                                          item.quantity,
-                                                      'orderPrice':
-                                                          item.quantity *
-                                                              item.price,
-                                                      'deliveryStatus':
-                                                          'preparing',
-                                                      'deliveryDate': '',
-                                                      'orderDate':
-                                                          DateTime.now(),
-                                                      'paymentStatus':
-                                                          'Payment on delivery',
-                                                      'orderReview': false,
-                                                    }).whenComplete(() async {
-                                                      await FirebaseFirestore
-                                                          .instance
-                                                          .runTransaction(
-                                                              (transaction) async {
-                                                        DocumentReference
-                                                            documentReference =
-                                                            FirebaseFirestore
-                                                                .instance
-                                                                .collection(
-                                                                    'products')
-                                                                .doc(item
-                                                                    .documentId);
-                                                        DocumentSnapshot
-                                                            snapshot2 =
-                                                            await transaction.get(
-                                                                documentReference);
+                                            Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Container(
+                                                  height: 50,
+                                                  decoration: BoxDecoration(
+                                                      color: generalColor,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10)),
+                                                  child: MaterialButton(
+                                                    onPressed: () async {
+                                                      showProgress();
 
-                                                        transaction.update(
-                                                            documentReference, {
-                                                          'inStock': snapshot2[
-                                                                  'inStock'] -
-                                                              item.quantity
+                                                      for (var item in context
+                                                          .read<CartProvider>()
+                                                          .getItems) {
+                                                        CollectionReference
+                                                            orderRef =
+                                                            _firestore
+                                                                .collection(
+                                                                    'Orders');
+                                                        orderId = Uuid().v4();
+                                                        await orderRef
+                                                            .doc(orderId)
+                                                            .set({
+                                                          'customerId':
+                                                              data['cid'],
+                                                          'customerName':
+                                                              data['fullName'],
+                                                          'phone':
+                                                              data['phone'],
+                                                          'email':
+                                                              data['email'],
+                                                          'address':
+                                                              data['address'],
+                                                          'profileImage':
+                                                              data['image'],
+                                                          'vendorUid':
+                                                              item.sellerUid,
+                                                          'productId':
+                                                              item.documentId,
+                                                          'orderCategory':
+                                                              item.category,
+                                                          'orderId': orderId,
+                                                          'orderName':
+                                                              item.name,
+                                                          'orderImage': item
+                                                              .imagesUrl.first,
+                                                          'orderQuantity':
+                                                              item.quantity,
+                                                          'orderPrice':
+                                                              item.quantity *
+                                                                  item.price,
+                                                          'deliveryStatus':
+                                                              'preparing',
+                                                          'deliveryDate': '',
+                                                          'orderDate':
+                                                              DateTime.now(),
+                                                          'paymentStatus':
+                                                              'Payment on delivery',
+                                                          'orderReview': false,
+                                                        }).whenComplete(
+                                                                () async {
+                                                          await FirebaseFirestore
+                                                              .instance
+                                                              .runTransaction(
+                                                                  (transaction) async {
+                                                            DocumentReference
+                                                                documentReference =
+                                                                FirebaseFirestore
+                                                                    .instance
+                                                                    .collection(
+                                                                        'products')
+                                                                    .doc(item
+                                                                        .documentId);
+                                                            DocumentSnapshot
+                                                                snapshot2 =
+                                                                await transaction
+                                                                    .get(
+                                                                        documentReference);
+
+                                                            transaction.update(
+                                                                documentReference,
+                                                                {
+                                                                  'inStock': snapshot2[
+                                                                          'inStock'] -
+                                                                      item.quantity
+                                                                });
+                                                          });
                                                         });
-                                                      });
-                                                    });
-                                                  }
-                                                  context
-                                                      .read<CartProvider>()
-                                                      .clearcart();
-                                                  Navigator.of(context)
-                                                      .pushNamedAndRemoveUntil(
-                                                          CustomerHomeScreen
-                                                              .routeName,
-                                                          (route) => false);
-                                                },
-                                                child: Center(
-                                                  child: Text(
-                                                    'Pay',
-                                                    style: TextStyle(
-                                                        fontSize: 18,
-                                                        color: Colors.white,
-                                                        fontWeight:
-                                                            FontWeight.bold),
+                                                      }
+                                                      context
+                                                          .read<CartProvider>()
+                                                          .clearcart();
+                                                      Navigator.of(context)
+                                                          .pushNamedAndRemoveUntil(
+                                                              CustomerHomeScreen
+                                                                  .routeName,
+                                                              (route) => false);
+                                                      showAlertDialog(context);
+                                                    },
+                                                    child: Center(
+                                                      child: Text(
+                                                        'Confirm Order',
+                                                        style: TextStyle(
+                                                            fontSize: 16,
+                                                            color: Colors.white,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 10,
+                                                ),
+                                                Container(
+                                                  height: 50,
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.red,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10)),
+                                                  child: MaterialButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context).pop(
+                                                        context,
+                                                      );
+                                                    },
+                                                    child: Center(
+                                                      child: Text(
+                                                        'Cancel Order',
+                                                        style: TextStyle(
+                                                            fontSize: 16,
+                                                            color: Colors.white,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  });
+                            } else if (selectedItem == 2) {
+                              showModalBottomSheet(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(15),
+                                    ),
+                                  ),
+                                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                                  context: context,
+                                  builder: (context) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(20.0),
+                                      child: Container(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.40,
+                                        decoration: BoxDecoration(),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Column(
+                                              children: [
+                                                Text(
+                                                  'Pay using mobile money, Visa or Mastercard ',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            Text(
+                                              'Name: ' + data['fullName'],
+                                              style: TextStyle(fontSize: 16),
+                                            ),
+                                            Text(
+                                              'Email: ' + data['email'],
+                                              style: TextStyle(fontSize: 16),
+                                            ),
+                                            Text(
+                                              'Phone: ' + data['phone'],
+                                              style: TextStyle(fontSize: 16),
+                                            ),
+                                            Text(
+                                              'Price: ' +
+                                                  getCurrency() +
+                                                  '${totalPaid.toStringAsFixed(2)}',
+                                              style: TextStyle(fontSize: 16),
+                                            ),
+                                            Center(
+                                              child: Container(
+                                                height: 40,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.80,
+                                                decoration: BoxDecoration(
+                                                    color: generalColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10)),
+                                                child: MaterialButton(
+                                                  onPressed: () async {
+                                                    await _makeFlutterwavePayment(
+                                                        context,
+                                                        fullname.toString(),
+                                                        phone.toString(),
+                                                        email.toString(),
+                                                        amount.toString());
+
+                                                    // MakePayment(
+                                                    //         context: context,
+                                                    //         fullname: fullname,
+                                                    //         phone: 0,
+                                                    //         amount: 10,
+                                                    //         email: email)
+                                                    //     .ChargeCardANdMakePayment();
+                                                  },
+                                                  child: Center(
+                                                    child: Text(
+                                                      'Pay with flutterwave',
+                                                      style: TextStyle(
+                                                          fontSize: 18,
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -442,10 +600,47 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                       ),
                                     );
                                   });
+                              // _handlePaymentInitialization() async {
+                              //   final style = FlutterwaveStyle(
+                              //       appBarText: "My Standard Blue",
+                              //       buttonColor: Color(0xffd0ebff),
+                              //       appBarIcon: Icon(Icons.message,
+                              //           color: Color(0xffd0ebff)),
+                              //       buttonTextStyle: TextStyle(
+                              //           color: Colors.black,
+                              //           fontWeight: FontWeight.bold,
+                              //           fontSize: 18),
+                              //       appBarColor: Color(0xffd0ebff),
+                              //       dialogCancelTextStyle: TextStyle(
+                              //           color: Colors.redAccent, fontSize: 18),
+                              //       dialogContinueTextStyle: TextStyle(
+                              //           color: Colors.blue, fontSize: 18));
+
+                              //   final Customer customer = Customer(
+                              //       name: data['fullName'],
+                              //       phoneNumber: data['phone'],
+                              //       email: data['email']);
+
+                              //   final Flutterwave flutterwave = Flutterwave(
+                              //       context: context,
+                              //       style: style,
+                              //       publicKey: "Public Key",
+                              //       currency: "GHS",
+                              //       redirectUrl: "my_redirect_url",
+                              //       txRef: "unique_transaction_reference",
+                              //       amount: "3000",
+                              //       customer: customer,
+                              //       paymentOptions:
+                              //           "ussd, card, barter, payattitude",
+                              //       customization:
+                              //           Customization(title: "Test Payment"),
+                              //       // isDebug: true
+                              //       isTestMode: true);
+                              // }
                             }
                           },
                           child: Text(
-                            'Confirm  ${totalPaid.toStringAsFixed(2)}',
+                            'Confirm GHS ${totalPaid.toStringAsFixed(2)}',
                             style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
@@ -467,5 +662,55 @@ class _PaymentScreenState extends State<PaymentScreen> {
             )),
           );
         });
+  }
+
+  _makeFlutterwavePayment(BuildContext context, String fullname, String phone,
+      String email, String amount) async {
+    try {
+      final style = FlutterwaveStyle(
+          appBarText: "flutterwave",
+          buttonColor: Color(0xffd0ebff),
+          appBarIcon: Icon(Icons.message, color: Color(0xffd0ebff)),
+          buttonTextStyle: TextStyle(
+              color: Colors.black, fontWeight: FontWeight.bold, fontSize: 18),
+          appBarColor: Color(0xffd0ebff),
+          dialogCancelTextStyle:
+              TextStyle(color: Colors.redAccent, fontSize: 18),
+          dialogContinueTextStyle: TextStyle(color: Colors.blue, fontSize: 18));
+
+      final Customer customer =
+          Customer(name: fullname, phoneNumber: phone, email: email);
+      // List<String> subaccount = ["RS_53FF6E5D8795AB01ED367E4FE9085B83"];
+      dynamic ref = Uuid().v4();
+
+      Flutterwave flutterwave = Flutterwave(
+          context: context,
+          // style: style,
+          publicKey: 'FLWPUBK-435621e8917276792e0a0a8b33ac50dd-X',
+          currency: 'GHS',
+          redirectUrl: "hello.com",
+          style: style,
+          txRef: ref,
+          amount: amount,
+          customer: customer,
+          paymentOptions: "Mobilemoneyghana",
+          customization: Customization(title: "Payment"),
+
+          // meta: {
+          //   customer_id: '',
+          // },
+          // subAccounts: subaccount,
+          isTestMode: false);
+
+      final ChargeResponse response = await flutterwave.charge();
+      if (response != null) {
+        print(response.toJson());
+        if (response.success == 'success') {}
+      } else {}
+    } catch (e) {
+      print(e);
+      // print('Hello there');
+      // print('');
+    }
   }
 }

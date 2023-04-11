@@ -20,6 +20,7 @@ class VendorProductsModel extends StatefulWidget {
 class _VendorProductsModel extends State<VendorProductsModel> {
   @override
   Widget build(BuildContext context) {
+    var onSale = widget.products['discount'];
     return Padding(
       padding: const EdgeInsets.only(left: 15, right: 15, top: 10, bottom: 15),
       child: Stack(
@@ -68,11 +69,13 @@ class _VendorProductsModel extends State<VendorProductsModel> {
                   height: 10,
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 10.0),
+                  padding: const EdgeInsets.only(left: 10.0, right: 10),
                   child: Text(
                     widget.products['productName'],
+                    overflow: TextOverflow.fade,
+                    softWrap: false,
                     textAlign: TextAlign.left,
-                    style: TextStyle(fontSize: 17),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
                 SizedBox(
@@ -84,14 +87,17 @@ class _VendorProductsModel extends State<VendorProductsModel> {
                     children: [
                       Container(
                         padding: EdgeInsets.only(
-                            left: 10, right: 10, top: 2, bottom: 2),
+                          left: 10,
+                          right: 10,
+                          top: 2,
+                        ),
                         decoration: BoxDecoration(
                             color: grainsColor,
                             borderRadius: BorderRadius.circular(10)),
                         child: Text(
                           widget.products['category'],
                           // textAlign: TextAlign.left,
-                          style: TextStyle(color: Colors.white, fontSize: 12),
+                          style: TextStyle(color: Colors.white, fontSize: 10),
                         ),
                       ),
                     ],
@@ -107,55 +113,34 @@ class _VendorProductsModel extends State<VendorProductsModel> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      RichText(
-                          text: TextSpan(children: <TextSpan>[
-                        TextSpan(
-                            text: getCurrency(),
-                            style:
-                                TextStyle(color: Colors.black, fontSize: 14)),
-                        TextSpan(
-                          text: widget.products['price'].toString(),
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.black,
+                      Flexible(
+                        child: RichText(
+                            text: TextSpan(children: <TextSpan>[
+                          TextSpan(
+                              text: getCurrency(),
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  overflow: TextOverflow.ellipsis,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold)),
+                          TextSpan(
+                            text: widget.products['price'].toString(),
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.black,
+                                overflow: TextOverflow.ellipsis,
+                                fontWeight: FontWeight.bold),
                           ),
-                        ),
-                      ])),
-                      // IconButton(
-                      //     onPressed: () {
-                      //       Provider.of<WishListProvider>(context,
-                      //                       listen: false)
-                      //                   .getWishItems
-                      //                   .firstWhereOrNull((wish) =>
-                      //                       wish.documentId ==
-                      //                       widget.products['productId']) !=
-                      //               null
-                      //           ? context
-                      //               .read<WishListProvider>()
-                      //               .removeWish(widget.products['productId'])
-                      //           : Provider.of<WishListProvider>(context,
-                      //                   listen: false)
-                      //               .addWishItem(
-                      //                   widget.products['productName'],
-                      //                   widget.products['price'],
-                      //                   1,
-                      //                   widget.products['inStock'],
-                      //                   widget.products['productImage'],
-                      //                   widget.products['productId'],
-                      //                   widget.products['sellerUid']);
-                      //     },
-                      //     icon: context
-                      //                 .watch<WishListProvider>()
-                      //                 .getWishItems
-                      //                 .firstWhereOrNull((wish) =>
-                      //                     wish.documentId ==
-                      //                     widget.products['productId']) !=
-                      //             null
-                      //         ? Icon(
-                      //             Icons.favorite,
-                      //             color: Colors.red,
-                      //           )
-                      //         : Icon(Icons.favorite_outline_outlined)),
+                          TextSpan(
+                            text: '/KG',
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                                overflow: TextOverflow.ellipsis,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ])),
+                      ),
                     ],
                   ),
                 ),
@@ -175,6 +160,52 @@ class _VendorProductsModel extends State<VendorProductsModel> {
           //         Text('New Arrival', style: TextStyle(color: Colors.white)),
           //   ),
           // ),
+          onSale != 0
+              ? Positioned(
+                  left: 0,
+                  top: 10,
+                  child: Container(
+                    height: 25,
+                    width: 65,
+                    decoration: BoxDecoration(
+                        color: generalColor,
+                        borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(10),
+                            bottomRight: Radius.circular(10))),
+                    child: Center(
+                      child: Text(
+                        'Save ${widget.products['discount'].toString()} %',
+                        style: TextStyle(color: Colors.white, fontSize: 12),
+                      ),
+                    ),
+                  ),
+                )
+              : Container(
+                  color: Colors.transparent,
+                ),
+          Positioned(
+            left: 0,
+            top: 10,
+            child: widget.products['inStock'] == 0
+                ? Container(
+                    height: 25,
+                    width: 80,
+                    decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(10),
+                            bottomRight: Radius.circular(10))),
+                    child: Center(
+                      child: Text(
+                        'Out of Stock',
+                        style: TextStyle(color: Colors.white, fontSize: 12),
+                      ),
+                    ),
+                  )
+                : Container(
+                    color: Colors.transparent,
+                  ),
+          ),
         ],
       ),
     );

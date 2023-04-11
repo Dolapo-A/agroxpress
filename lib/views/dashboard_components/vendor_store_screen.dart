@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:agroxpresss/const.dart';
-import 'package:agroxpresss/views/dashboard_screens/vendor%20products%20inner%20Screens/vendor_products_model.dart';
+import 'package:agroxpresss/models/vendor_products_model.dart';
 import 'package:agroxpresss/views/screens/widget/products_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +39,7 @@ class VendorStoreScreen extends StatelessWidget {
           return Scaffold(
             extendBodyBehindAppBar: true,
             appBar: AppBar(
-              toolbarHeight: 80,
+              toolbarHeight: 60,
               centerTitle: true,
               flexibleSpace: ClipRect(
                 child: BackdropFilter(
@@ -99,15 +99,13 @@ class VendorStoreScreen extends StatelessWidget {
                 }
 
                 return GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisExtent: 250,
-
-                    // mainAxisSpacing: 20
-                  ),
                   shrinkWrap: true,
                   itemCount: snapshot.data!.docs.length,
-                  // crossAxisCount: 2,
+                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 230,
+                    childAspectRatio: 3,
+                    mainAxisExtent: 250,
+                  ),
                   itemBuilder: (BuildContext context, int index) {
                     return VendorProductsModel(
                       products: snapshot.data!.docs[index],

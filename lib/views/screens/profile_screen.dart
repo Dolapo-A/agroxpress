@@ -4,12 +4,14 @@ import 'package:agroxpresss/views/minor_screens/place_order_screen.dart';
 import 'package:agroxpresss/views/screens/auth/forgot_password_profile_screen.dart';
 import 'package:agroxpresss/views/screens/auth/forgot_password_screen.dart';
 import 'package:agroxpresss/views/screens/auth/user_login_screen.dart';
+import 'package:agroxpresss/views/screens/auth/vendor_login_screen.dart';
 import 'package:agroxpresss/views/screens/cart_screen%20_product_details.dart';
 import 'package:agroxpresss/views/screens/cart_screen.dart';
 import 'package:agroxpresss/views/screens/wishlist_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../controllers/alert_dialog.dart';
@@ -240,7 +242,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SliverAppBar(
                   // automaticallyImplyLeading: false,
                   backgroundColor: Colors.white,
-                  expandedHeight: 220,
+                  expandedHeight: 180,
                   flexibleSpace: LayoutBuilder(
                     builder: (context, constraints) {
                       return FlexibleSpaceBar(
@@ -250,86 +252,89 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: Text('Account'),
                         ),
                         background: Container(
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: 50,
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        CircleAvatar(
-                                            radius: 30,
-                                            backgroundColor: Colors.grey,
-                                            backgroundImage: NetworkImage(
-                                                '${data['image']}')),
-                                        SizedBox(
-                                          width: 15,
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              '${data['fullName']}',
-                                              style: TextStyle(
-                                                  fontSize: 22,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Text(
-                                              '${data['phone']}',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.grey,
+                          child: SafeArea(
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 0,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          CircleAvatar(
+                                              radius: 30,
+                                              backgroundColor: Colors.grey[100],
+                                              backgroundImage: NetworkImage(
+                                                  '${data['image']}')),
+                                          SizedBox(
+                                            width: 15,
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                '${data['fullName']}',
+                                                style: TextStyle(
+                                                    fontSize: 22,
+                                                    fontWeight:
+                                                        FontWeight.bold),
                                               ),
-                                            )
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                    IconButton(
-                                      onPressed: () {},
-                                      icon: Icon(
-                                        Icons.edit,
-                                        color: Colors.grey,
+                                              SizedBox(
+                                                height: 5,
+                                              ),
+                                              Text(
+                                                '${data['phone']}',
+                                                style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: Colors.grey,
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 20, right: 20),
-                                child: Divider(
-                                  color: Colors.grey.shade500,
-                                  thickness: 0.8,
-                                ),
-                              ),
-                              InkWell(
-                                onTap: (() {}),
-                                child: ListTile(
-                                  horizontalTitleGap: 5,
-                                  title: Text('${data['email']}'),
-                                  // subtitle: Text('dolapo@gmail.com'),
-                                  leading: Icon(
-                                    Icons.email,
-                                    color: Colors.grey,
+                                      IconButton(
+                                        onPressed: () {},
+                                        icon: Icon(
+                                          Icons.edit,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ),
-                              Divider(
-                                color: Colors.grey.shade200,
-                                thickness: 10,
-                              ),
-                            ],
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 20, right: 20),
+                                  child: Divider(
+                                    color: Colors.grey.shade500,
+                                    thickness: 0.8,
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap: (() {}),
+                                  child: ListTile(
+                                    horizontalTitleGap: 5,
+                                    title: Text('${data['email']}'),
+                                    // subtitle: Text('dolapo@gmail.com'),
+                                    leading: Icon(
+                                      Icons.email,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                                Divider(
+                                  color: Colors.grey.shade200,
+                                  thickness: 10,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );
@@ -385,6 +390,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 thickness: 0.5,
                               ),
                             ),
+
                             InkWell(
                               onTap: () {
                                 Navigator.push(context,
@@ -447,6 +453,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ),
                             ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 20.0),
+                              child: Divider(
+                                color: Colors.grey.shade500,
+                                thickness: 0.5,
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return VendorLoginScreen();
+                                }));
+                              },
+                              child: ListTile(
+                                horizontalTitleGap: 5,
+                                title: Text('Want to sell?'),
+                                subtitle: Text(
+                                  'You will need to create a vendor account if you do not have one',
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                                leading: Icon(
+                                  CupertinoIcons.tag_circle,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
                             Divider(
                               color: Colors.grey.shade200,
                               thickness: 10,
@@ -476,17 +509,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ),
                             ),
-                            ListTile(
-                              horizontalTitleGap: 5,
-                              title: Text(
-                                'Delete Account',
-                                style: TextStyle(color: Colors.red.shade700),
-                              ),
-                              leading: Icon(
-                                Icons.delete,
-                                color: Colors.red.shade700,
-                              ),
-                            ),
+                            // ListTile(
+                            //   horizontalTitleGap: 5,
+                            //   title: Text(
+                            //     'Delete Account',
+                            //     style: TextStyle(color: Colors.red.shade700),
+                            //   ),
+                            //   leading: Icon(
+                            //     Icons.delete,
+                            //     color: Colors.red.shade700,
+                            //   ),
+                            // ),
                           ],
                         ),
                       )

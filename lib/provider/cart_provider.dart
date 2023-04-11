@@ -23,7 +23,7 @@ class CartProvider extends ChangeNotifier {
   }
 
   void addItem(String name, double price, int quantity, int inStock,
-      List imagesUrl, String documentId, String sellerUid) {
+      List imagesUrl, String documentId, String sellerUid, String category) {
     final product = Product(
         name: name,
         price: price,
@@ -31,7 +31,8 @@ class CartProvider extends ChangeNotifier {
         inStock: inStock,
         imagesUrl: imagesUrl,
         documentId: documentId,
-        sellerUid: sellerUid);
+        sellerUid: sellerUid,
+        category: category);
 
     _list.add(product);
 

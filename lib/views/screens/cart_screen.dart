@@ -79,12 +79,12 @@ class CartScreen extends StatelessWidget {
                         return Card(
                           clipBehavior: Clip.hardEdge,
                           child: SizedBox(
-                            height: 100,
+                            height: 80,
                             child: Row(
                               children: [
                                 SizedBox(
-                                    height: 100,
-                                    width: 100,
+                                    height: 80,
+                                    width: 80,
                                     child: CachedNetworkImage(
                                         fit: BoxFit.cover,
                                         imageUrl: cartProvider
@@ -132,7 +132,7 @@ class CartScreen extends StatelessWidget {
                                                   TextSpan(
                                                     text: 'GHS ',
                                                     style: TextStyle(
-                                                        fontSize: 14,
+                                                        fontSize: 12,
                                                         color: Colors.black,
                                                         fontWeight:
                                                             FontWeight.bold),
@@ -144,7 +144,7 @@ class CartScreen extends StatelessWidget {
                                                     style: TextStyle(
                                                       fontSize: 14,
                                                       fontWeight:
-                                                          FontWeight.w500,
+                                                          FontWeight.bold,
                                                       color: Colors.black,
                                                     ),
                                                   ),
@@ -152,7 +152,7 @@ class CartScreen extends StatelessWidget {
                                               ),
                                             ),
                                             Container(
-                                              // height: 40,
+                                              height: 35,
                                               // width: 40,
                                               decoration: BoxDecoration(
                                                   color: Colors.grey.shade200,
@@ -196,7 +196,8 @@ class CartScreen extends StatelessWidget {
                                                                               product.quantity,
                                                                               product.imagesUrl,
                                                                               product.documentId,
-                                                                              product.sellerUid);
+                                                                              product.sellerUid,
+                                                                              product.category);
 
                                                                       context
                                                                           .read<

@@ -58,7 +58,7 @@ class _proteinsScreenState extends State<proteinsScreen> {
           gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: 230,
               childAspectRatio: 3,
-              mainAxisExtent: 250),
+              mainAxisExtent: 240),
           shrinkWrap: true,
           itemCount: snapshot.data!.docs.length,
           // crossAxisCount: 2,

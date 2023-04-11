@@ -46,13 +46,11 @@ class _grainsGalleryScreenState extends State<grainsGalleryScreen> {
 
         return GridView.builder(
           shrinkWrap: true,
-
           itemCount: snapshot.data!.docs.length,
-
           gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
               maxCrossAxisExtent: 230,
               childAspectRatio: 3,
-              mainAxisExtent: 250),
+              mainAxisExtent: 240),
           itemBuilder: (BuildContext context, int index) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 0.0),

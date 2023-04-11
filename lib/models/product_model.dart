@@ -5,16 +5,19 @@ class Product {
   int inStock;
   List imagesUrl;
   String documentId;
+  String category;
   String sellerUid;
 
-  Product(
-      {required this.name,
-      required this.price,
-      required this.quantity,
-      required this.inStock,
-      required this.imagesUrl,
-      required this.documentId,
-      required this.sellerUid});
+  Product({
+    required this.name,
+    required this.price,
+    required this.quantity,
+    required this.inStock,
+    required this.imagesUrl,
+    required this.documentId,
+    required this.sellerUid,
+    required this.category,
+  });
 
   void increase() {
     // quantity <= inStock ? quantity = inStock :

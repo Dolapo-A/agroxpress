@@ -5,19 +5,20 @@ import 'package:agroxpresss/controllers/currency_sign_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 
 class CustomerOrderScreen extends StatefulWidget {
   @override
-  _CustomerOrderScreenState createState() => _CustomerOrderScreenState();
+  State<CustomerOrderScreen> createState() => _CustomerOrderScreenState();
 }
 
 class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
+  late double rate;
+  late String comment;
   // final Stream<QuerySnapshot> _usersStream =
-  //     FirebaseFirestore.instance.collection('users').snapshots();
-
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
@@ -42,7 +43,7 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
 
         return Scaffold(
           appBar: AppBar(
-              toolbarHeight: 80,
+              toolbarHeight: 60,
               leading: IconButton(
                   onPressed: () {
                     Navigator.pop(context);
@@ -68,7 +69,7 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
               backgroundColor: Colors.transparent,
               title: Text(
                 'Orders',
-                style: TextStyle(color: Colors.black, fontSize: 24),
+                style: TextStyle(color: Colors.black, fontSize: 20),
               )),
           body: ListView.builder(
               // shrinkWrap: true,
@@ -88,8 +89,8 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
                       title: Row(
                         children: [
                           Container(
-                            height: 100,
-                            width: 100,
+                            height: 80,
+                            width: 80,
                             child: CachedNetworkImage(
                               fit: BoxFit.cover,
                               imageUrl: order['orderImage'].toString(),
@@ -136,6 +137,7 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
                                               text: getCurrency(),
                                               style: TextStyle(
                                                 fontSize: 14,
+                                                fontWeight: FontWeight.bold,
                                                 // fontWeight: FontWeight.bold,
                                                 color: Colors.black,
                                               ),
@@ -193,15 +195,15 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
                                   // ),
                                   Text(
                                     'Email:  ${order['email']}',
-                                    style: TextStyle(fontSize: 16),
+                                    style: TextStyle(fontSize: 14),
                                   ),
                                   Text(
                                     'Phone:  ${order['phone']}',
-                                    style: TextStyle(fontSize: 16),
+                                    style: TextStyle(fontSize: 14),
                                   ),
                                   Text(
                                     'Address:  ${order['address']}',
-                                    style: TextStyle(fontSize: 16),
+                                    style: TextStyle(fontSize: 14),
                                   ),
 
                                   RichText(
@@ -210,7 +212,7 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
                                         TextSpan(
                                           text: 'Payment Type: ',
                                           style: TextStyle(
-                                            fontSize: 16,
+                                            fontSize: 14,
                                             // fontWeight: FontWeight.bold,
                                             color: Colors.black,
                                           ),
@@ -218,7 +220,7 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
                                         TextSpan(
                                           text: '${order['paymentStatus']}*',
                                           style: TextStyle(
-                                              fontSize: 16,
+                                              fontSize: 14,
                                               color: Colors.black,
                                               fontWeight: FontWeight.bold),
                                         ),
@@ -227,43 +229,252 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
                                   ),
                                   Text(
                                     'Delivery Status:  ${order['deliveryStatus']}',
-                                    style: TextStyle(fontSize: 16),
+                                    style: TextStyle(fontSize: 14),
                                   ),
 
-                                  Text(
-                                    'Estimated Delivery Date:  ${order['deliveryDate']}',
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-
-                                  // order['deliveryStatus'] == 'delivered' &&
-                                  //         order['orderReview'] == false
-                                  //     ? TextButton(
-                                  //         onPressed: () {},
-                                  //         child: Text('Write Review'),
-                                  //       )
-                                  //     : Text(''),
+                                  order['deliveryStatus'] == 'preparing' ||
+                                          order['deliveryStatus'] == 'shipping'
+                                      ? Text(
+                                          'Estimated Delivery Date: ' +
+                                              (DateFormat('dd-MM-yyyy')
+                                                  .format(order['deliveryDate']
+                                                      .toDate())
+                                                  .toString()),
+                                          style: TextStyle(fontSize: 14),
+                                        )
+                                      : Container(),
 
                                   order['deliveryStatus'] == 'delivered' &&
                                           order['orderReview'] == false
-                                      ? RichText(
-                                          text: TextSpan(children: <TextSpan>[
-                                          TextSpan(
-                                            text: 'Write Review',
-                                            style: TextStyle(
-                                                color: Color(0xff437366),
-                                                fontSize: 14),
-                                            // recognizer: TapGestureRecognizer()
-                                            //   ..onTap = () => Navigator.of(context)
-                                            //           .push(PageRouteBuilder(
-                                            //         pageBuilder: (context, animation,
-                                            //                 secondaryAnimation) =>
-                                            //             LandingCustomerScreen(),
-                                            //       ),
+                                      ? TextButton(
+                                          onPressed: () {
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return Material(
+                                                    color: Colors.white,
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 20.0,
+                                                              right: 20.0,
+                                                              bottom: 20.0,
+                                                              top: 40),
+                                                      child:
+                                                          SingleChildScrollView(
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            RatingBar.builder(
+                                                                initialRating:
+                                                                    1,
+                                                                glow: false,
+                                                                minRating: 0.5,
+                                                                allowHalfRating:
+                                                                    true,
+                                                                itemBuilder:
+                                                                    (context,
+                                                                        _) {
+                                                                  return Icon(
+                                                                      Icons
+                                                                          .star,
+                                                                      color: Colors
+                                                                          .amberAccent);
+                                                                },
+                                                                onRatingUpdate:
+                                                                    (value) {
+                                                                  rate = value;
+                                                                }),
+                                                            SizedBox(
+                                                              height: 20,
+                                                            ),
+                                                            TextField(
+                                                              maxLines: 6,
+                                                              decoration:
+                                                                  InputDecoration(
+                                                                hintText:
+                                                                    'Enter your review',
+                                                                border: OutlineInputBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            5)),
+                                                                enabledBorder:
+                                                                    OutlineInputBorder(
+                                                                        borderSide:
+                                                                            BorderSide(
+                                                                          color:
+                                                                              generalColor,
+                                                                          width:
+                                                                              1,
+                                                                        ),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(10)),
+                                                                focusedBorder:
+                                                                    OutlineInputBorder(
+                                                                        borderSide:
+                                                                            BorderSide(
+                                                                          color:
+                                                                              generalColor,
+                                                                          width:
+                                                                              2,
+                                                                        ),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(10)),
+                                                              ),
+                                                              onChanged:
+                                                                  (value) {
+                                                                comment = value;
+                                                              },
+                                                            ),
+                                                            SizedBox(
+                                                              height: 20,
+                                                            ),
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              children: [
+                                                                Container(
+                                                                  height: 50,
+                                                                  width: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width *
+                                                                      0.40,
+                                                                  decoration: BoxDecoration(
+                                                                      color:
+                                                                          generalColor,
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              10)),
+                                                                  child:
+                                                                      MaterialButton(
+                                                                    onPressed:
+                                                                        () async {
+                                                                      CollectionReference collRef = FirebaseFirestore
+                                                                          .instance
+                                                                          .collection(
+                                                                              'products')
+                                                                          .doc(order[
+                                                                              'productId'])
+                                                                          .collection(
+                                                                              'reviews');
 
-                                            //       ),
-                                          ),
-                                        ]))
-                                      : SizedBox(),
+                                                                      await collRef
+                                                                          .doc(FirebaseAuth
+                                                                              .instance
+                                                                              .currentUser!
+                                                                              .uid)
+                                                                          .set({
+                                                                        'name':
+                                                                            order['customerName'],
+                                                                        'email':
+                                                                            order['email'],
+                                                                        'rate':
+                                                                            rate,
+                                                                        'comment':
+                                                                            comment,
+                                                                        'profileImage':
+                                                                            order['profileImage'],
+                                                                      }).whenComplete(
+                                                                              () async {
+                                                                        await FirebaseFirestore
+                                                                            .instance
+                                                                            .runTransaction((transaction) async {
+                                                                          DocumentReference
+                                                                              documentReference =
+                                                                              FirebaseFirestore.instance.collection('Orders').doc(order['orderId']);
+
+                                                                          transaction.update(
+                                                                              documentReference,
+                                                                              {
+                                                                                'orderReview': true,
+                                                                              });
+                                                                        });
+                                                                      });
+
+                                                                      await Future.delayed(const Duration(
+                                                                              microseconds:
+                                                                                  100))
+                                                                          .whenComplete(() =>
+                                                                              Navigator.pop(context));
+                                                                    },
+                                                                    child:
+                                                                        Center(
+                                                                      child:
+                                                                          Text(
+                                                                        'Submit',
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                                14,
+                                                                            color:
+                                                                                Colors.white,
+                                                                            fontWeight: FontWeight.bold),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                Container(
+                                                                  height: 50,
+                                                                  width: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width *
+                                                                      0.40,
+                                                                  decoration: BoxDecoration(
+                                                                      color: Colors
+                                                                          .red,
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              10)),
+                                                                  child:
+                                                                      MaterialButton(
+                                                                    onPressed:
+                                                                        () {
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop(
+                                                                        context,
+                                                                      );
+                                                                    },
+                                                                    child:
+                                                                        Center(
+                                                                      child:
+                                                                          Text(
+                                                                        'Cancel',
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                                14,
+                                                                            color:
+                                                                                Colors.white,
+                                                                            fontWeight: FontWeight.bold),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                });
+                                          },
+                                          child: const Text('Write review'))
+                                      : Container(),
+                                  // ? RichText(
+                                  //     text: TextSpan(children: <TextSpan>[
+                                  //     TextSpan(
+                                  //       text: 'Write Review',
+                                  //       style: TextStyle(
+                                  //           color: Color(0xff437366),
+                                  //           fontSize: 14),
+                                  //     ),
+                                  //   ]))
+                                  // : Container(),
                                   order['deliveryStatus'] == 'delivered' &&
                                           order['orderReview'] == true
                                       ? Row(
@@ -282,7 +493,7 @@ class _CustomerOrderScreenState extends State<CustomerOrderScreen> {
                                             )
                                           ],
                                         )
-                                      : SizedBox(),
+                                      : Container(),
                                 ]),
                           ),
                         )
