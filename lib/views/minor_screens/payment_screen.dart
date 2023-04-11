@@ -598,7 +598,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                           ],
                                         ),
                                       ),
-                                    );
+                                    );  
                                   });
                               // _handlePaymentInitialization() async {
                               //   final style = FlutterwaveStyle(
