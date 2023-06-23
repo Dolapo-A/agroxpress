@@ -25,5 +25,5 @@ AgroXpress is a mobile application developed using the Flutter framework. It ser
    Firebase Configuration: AgroXpress uses Firebase for user authentication. You need to create a Firebase project and configure the necessary Firebase services (Authentication 
    and Cloud Firestore). Obtain the Firebase configuration file (google-services.json) and place it in the android/app/ directory for Android or the ios/Runner/ directory for 
    iOS.
-##Support and Contribution
+## Support and Contribution
 If you encounter any issues, have questions, or want to contribute to AgroXpress, please reach out to the project's GitHub repository at https://github.com/dolapo-crypto/agroxpress. Contributions are welcomed in form of bug reports, feature requests, and pull requests.
