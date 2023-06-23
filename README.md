@@ -2,7 +2,7 @@
 ## Agroxpress Flutter Application
 AgroXpress is a mobile application developed using the Flutter framework. It serves as a platform to connect farmers and buyers in the agricultural industry, facilitating the buying and selling of various agricultural products. The application provides a user-friendly interface for both farmers and buyers to interact and conduct transactions efficiently.
 
-# Features
+### Features
 1. User Registration and Authentication: Users can create an account and authenticate themselves to access the application's features.
 2. Farmers' Dashboard: Farmers can create and manage their profiles, including personal information, contact details, and a list of products they offer for sale.
 3. Buyers' Dashboard: Buyers can search for agricultural products, view product details, and contact farmers to initiate purchases.
