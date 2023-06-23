@@ -13,27 +13,15 @@ AgroXpress is a mobile application developed using the Flutter framework. It ser
 8. User Ratings and Reviews: Buyers can provide ratings and reviews for farmers based on their experience with the products and services received.
 
 ## Getting Started
-# Installation
+### Installation
 1. Clone the repository to your local machine.
 2. Install the required dependencies using Flutter.
 3. Connect your mobile device or start an emulator.
 4. Run the application.
 
-#Configuration
+### Configuration
   To use AgroXpress, you need to configure the following settings:
 
    Firebase Configuration: AgroXpress uses Firebase for user authentication. You need to create a Firebase project and configure the necessary Firebase services (Authentication 
    and Cloud Firestore). Obtain the Firebase configuration file (google-services.json) and place it in the android/app/ directory for Android or the ios/Runner/ directory for 
    iOS.
-
-
-
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
