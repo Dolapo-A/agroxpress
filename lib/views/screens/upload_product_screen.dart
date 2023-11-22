@@ -216,7 +216,9 @@ class _UploadProductScreenState extends State<UploadProductScreen> {
                                 setState(() {
                                   categoryValue = value!;
                                 });
-                              }),
+                              }
+                              
+                              ),
                         ),
                       ),
                     ],

@@ -37,7 +37,9 @@ class ManageProductScreen extends StatelessWidget {
                 color: Colors.grey,
                 height: 1.0,
               ),
-              preferredSize: Size.fromHeight(4.0)),
+              preferredSize: Size.fromHeight(4.0)
+              )
+              ,
           centerTitle: true,
           elevation: 0,
           backgroundColor: Colors.transparent,

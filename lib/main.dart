@@ -1,3 +1,4 @@
+import 'package:agroxpresss/const.dart';
 import 'package:agroxpresss/provider/cart_provider.dart';
 import 'package:agroxpresss/provider/wishlist_provider.dart';
 import 'package:agroxpresss/splash_screen.dart';
@@ -15,9 +16,14 @@ import 'package:flutter/material.dart';
 // import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:firedart/firedart.dart';
+
+const apiKey = "AIzaSyB3UUd1shQSmSvckm0rXarf6Ls1wXlvrFc";
+const projectId = "agroxpresss";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Firestore.initialize(projectId);
 
   await Firebase.initializeApp(
           // options: const FirebaseOptions(

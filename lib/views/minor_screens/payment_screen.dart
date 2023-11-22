@@ -364,6 +364,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                                     onPressed: () async {
                                                       showProgress();
 
+                                                      // paymentproductstate(data);
                                                       for (var item in context
                                                           .read<CartProvider>()
                                                           .getItems) {
@@ -567,20 +568,95 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                                             10)),
                                                 child: MaterialButton(
                                                   onPressed: () async {
-                                                    await _makeFlutterwavePayment(
+                                                    _makeFlutterwavePayment(
                                                         context,
                                                         fullname.toString(),
                                                         phone.toString(),
                                                         email.toString(),
                                                         amount.toString());
 
-                                                    // MakePayment(
-                                                    //         context: context,
-                                                    //         fullname: fullname,
-                                                    //         phone: 0,
-                                                    //         amount: 10,
-                                                    //         email: email)
-                                                    //     .ChargeCardANdMakePayment();
+                                                    for (var item in context
+                                                        .read<CartProvider>()
+                                                        .getItems) {
+                                                      CollectionReference
+                                                          orderRef =
+                                                          _firestore.collection(
+                                                              'Orders');
+                                                      orderId = Uuid().v4();
+                                                      await orderRef
+                                                          .doc(orderId)
+                                                          .set({
+                                                        'customerId':
+                                                            data['cid'],
+                                                        'customerName':
+                                                            data['fullName'],
+                                                        'phone': data['phone'],
+                                                        'email': data['email'],
+                                                        'address':
+                                                            data['address'],
+                                                        'profileImage':
+                                                            data['image'],
+                                                        'vendorUid':
+                                                            item.sellerUid,
+                                                        'productId':
+                                                            item.documentId,
+                                                        'orderCategory':
+                                                            item.category,
+                                                        'orderId': orderId,
+                                                        'orderName': item.name,
+                                                        'orderImage': item
+                                                            .imagesUrl.first,
+                                                        'orderQuantity':
+                                                            item.quantity,
+                                                        'orderPrice':
+                                                            item.quantity *
+                                                                item.price,
+                                                        'deliveryStatus':
+                                                            'preparing',
+                                                        'deliveryDate': '',
+                                                        'orderDate':
+                                                            DateTime.now(),
+                                                        'paymentStatus':
+                                                            'Mobile money and visa/mastercard',
+                                                        'orderReview': false,
+                                                      }).whenComplete(() async {
+                                                        await FirebaseFirestore
+                                                            .instance
+                                                            .runTransaction(
+                                                                (transaction) async {
+                                                          DocumentReference
+                                                              documentReference =
+                                                              FirebaseFirestore
+                                                                  .instance
+                                                                  .collection(
+                                                                      'products')
+                                                                  .doc(item
+                                                                      .documentId);
+                                                          DocumentSnapshot
+                                                              snapshot2 =
+                                                              await transaction.get(
+                                                                  documentReference);
+
+                                                          transaction.update(
+                                                              documentReference,
+                                                              {
+                                                                'inStock': snapshot2[
+                                                                        'inStock'] -
+                                                                    item.quantity
+                                                              });
+                                                        });
+                                                      });
+                                                    }
+
+                                                    context
+                                                        .read<CartProvider>()
+                                                        .clearcart();
+                                                    Navigator.of(context)
+                                                        .pushNamedAndRemoveUntil(
+                                                            CustomerHomeScreen
+                                                                .routeName,
+                                                            (route) => false);
+                                                    showAlertDialog(context);
                                                   },
                                                   child: Center(
                                                     child: Text(
@@ -598,7 +674,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                           ],
                                         ),
                                       ),
-                                    );  
+                                    );
                                   });
                               // _handlePaymentInitialization() async {
                               //   final style = FlutterwaveStyle(
@@ -711,6 +787,44 @@ class _PaymentScreenState extends State<PaymentScreen> {
       print(e);
       // print('Hello there');
       // print('');
+    }
+  }
+
+  paymentproductstate(data) async {
+    for (var item in context.read<CartProvider>().getItems) {
+      CollectionReference orderRef = _firestore.collection('Orders');
+      orderId = Uuid().v4();
+      await orderRef.doc(orderId).set({
+        'customerId': data['cid'],
+        'customerName': data['fullName'],
+        'phone': data['phone'],
+        'email': data['email'],
+        'address': data['address'],
+        'profileImage': data['image'],
+        'vendorUid': item.sellerUid,
+        'productId': item.documentId,
+        'orderCategory': item.category,
+        'orderId': orderId,
+        'orderName': item.name,
+        'orderImage': item.imagesUrl.first,
+        'orderQuantity': item.quantity,
+        'orderPrice': item.quantity * item.price,
+        'deliveryStatus': 'preparing',
+        'deliveryDate': '',
+        'orderDate': DateTime.now(),
+        'paymentStatus': 'Payment on delivery',
+        'orderReview': false,
+      }).whenComplete(() async {
+        await FirebaseFirestore.instance.runTransaction((transaction) async {
+          DocumentReference documentReference = FirebaseFirestore.instance
+              .collection('products')
+              .doc(item.documentId);
+          DocumentSnapshot snapshot2 = await transaction.get(documentReference);
+
+          // transaction.update(documentReference,
+          //     {'inStock': snapshot2['inStock'] - item.quantity});
+        });
+      });
     }
   }
 }

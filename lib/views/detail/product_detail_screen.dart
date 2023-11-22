@@ -12,7 +12,7 @@ import 'package:agroxpresss/views/screens/cart_screen%20_product_details.dart';
 import 'package:agroxpresss/views/screens/widget/full_image_screen.dart';
 import 'package:agroxpresss/views/screens/widget/products_model.dart';
 import 'package:another_flushbar/flushbar.dart';
-import 'package:badges/badges.dart';
+import 'package:badges/badges.dart' as badges;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expandable/expandable.dart';
@@ -492,13 +492,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       return CartScreenProductDetails();
                     }));
                   },
-                  icon: Badge(
+                  icon: badges.Badge(
                       showBadge:
                           Provider.of<CartProvider>(context).getItems.isEmpty
                               ? false
                               : true,
-                      badgeColor: generalColor,
-                      animationType: BadgeAnimationType.scale,
+                      // Color: generalColor,
+                      // animationType: badges.BadgeAnimationType.scale,
                       badgeContent: Text(
                         Provider.of<CartProvider>(context)
                             .getItems
@@ -539,6 +539,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         borderRadius: BorderRadius.circular(10)),
                     child: MaterialButton(
                       onPressed: () {
+                        
                         showModalBottomSheet(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.vertical(
