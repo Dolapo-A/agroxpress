@@ -18,12 +18,3 @@ AgroXpress, final project work at KTU is a mobile application developed using th
 2. Install the required dependencies using Flutter.
 3. Connect your mobile device or start an emulator.
 4. Run the application.
-
-### Configuration
-  To use AgroXpress, you need to configure the following settings:
-
-   Firebase Configuration: AgroXpress uses Firebase for user authentication. You need to create a Firebase project and configure the necessary Firebase services (Authentication 
-   and Cloud Firestore). Obtain the Firebase configuration file (google-services.json) and place it in the android/app/ directory for Android or the ios/Runner/ directory for 
-   iOS.
-## Support and Contribution
-If you encounter any issues, have questions, or want to contribute to AgroXpress, please reach out to the project's GitHub repository at https://github.com/dolapo-crypto/agroxpress. Contributions are welcomed in form of bug reports, feature requests, and pull requests.
